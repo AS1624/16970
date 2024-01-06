@@ -97,9 +97,9 @@ public class Teleop extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "motor0");
-        leftBackDrive   = hardwareMap.get(DcMotor.class, "motor1");
+        leftBackDrive   = hardwareMap.get(DcMotor.class, "motor3");
         rightBackDrive = hardwareMap.get(DcMotor.class, "motor2");
-        rightFrontDrive  = hardwareMap.get(DcMotor.class, "motor3");
+        rightFrontDrive  = hardwareMap.get(DcMotor.class, "motor1");
         
         door1Left       = hardwareMap.get(Servo.class, "servo5");
         door1Right      = hardwareMap.get(Servo.class, "servo4");
@@ -109,8 +109,8 @@ public class Teleop extends LinearOpMode {
         lever           = hardwareMap.get(Servo.class, "servo0");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         
         // Wait for the game to start (driver presses PLAY)
@@ -131,8 +131,8 @@ public class Teleop extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double  drive    =   gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double  strafe   =   -gamepad1.left_stick_x;
+            double  drive    = - gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double  strafe   =   gamepad1.left_stick_x;
             double  turn     =   gamepad1.right_stick_x;
             boolean slow     =   gamepad1.right_bumper;
             
@@ -173,8 +173,8 @@ public class Teleop extends LinearOpMode {
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double leftFrontPower  = drive + strafe - turn;
-            double rightFrontPower = drive - strafe - turn;
-            double leftBackPower   = drive - strafe + turn;
+            double rightFrontPower = drive - strafe + turn;
+            double leftBackPower   = drive - strafe - turn;
             double rightBackPower  = drive + strafe + turn;
 
             // Normalize the values so no wheel power exceeds 100%
