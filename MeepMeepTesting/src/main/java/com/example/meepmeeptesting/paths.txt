@@ -2,10 +2,7 @@ far red:
     center:
     drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
                                     .forward(28)
-                                    .strafeLeft(22)
-                                    .addDisplacementMarker(() -> {
-                                        /* grab one white pixel */
-                                    })
+                                    .strafeLeft(18)
                                     .forward(23)
                                     .turn(Math.toRadians(-90))
                                     .lineTo(new Vector2d(48, -12))
@@ -15,12 +12,9 @@ far red:
     left:
     drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
                                     .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
-                                    .strafeLeft(10)
-                                    .splineTo(new Vector2d(-56, -36), Math.toRadians(180))
-                                    .addDisplacementMarker(() -> {
-                                        /* grab a white pixel */
-                                    })
-                                    .lineTo(new Vector2d(-56, -12))
+                                    .strafeRight(10)
+                                    .turn(Math.toRadians(-45))
+                                    .forward(17)
                                     .turn(Math.toRadians(-90))
                                     .lineTo(new Vector2d(48, -12))
                                     .strafeRight(24)
@@ -30,11 +24,8 @@ far red:
     drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
                                     .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
                                     .strafeLeft(10)
-                                    .splineTo(new Vector2d(-56, -36), Math.toRadians(180))
-                                    .addDisplacementMarker(() -> {
-                                        /* grab a white pixel */
-                                    })
-                                    .lineTo(new Vector2d(-56, -12))
+                                    .turn(Math.toRadians(45))
+                                    .forward(17)
                                     .turn(Math.toRadians(-90))
                                     .lineTo(new Vector2d(48, -12))
                                     .strafeRight(24)
@@ -42,30 +33,30 @@ far red:
 far blue:
     right:
     drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
-                                    .splineTo(new Vector2d(-29, 36), Math.toRadians(315))
-                                    .strafeRight(10)
-                                    .splineTo(new Vector2d(-56, 36), Math.toRadians(180))
-                                    .addDisplacementMarker(() -> {
-                                        /* grab a white pixel */
-                                    })
-                                    .lineTo(new Vector2d(-56, 12))
+                                    .splineTo(new Vector2d(-41, 36), Math.toRadians(-135))
+                                    .strafeLeft(10)
+                                    .turn(Math.toRadians(45))
+                                    .forward(17)
                                     .turn(Math.toRadians(90))
                                     .lineTo(new Vector2d(48, 12))
                                     .strafeLeft(24)
                                     .build()
     left:
     drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
-                                    .splineTo(new Vector2d(-41, 36), Math.toRadians(225))
+                                    .splineTo(new Vector2d(-29, 36), Math.toRadians(-45))
                                     .strafeRight(10)
-                                    .splineTo(new Vector2d(-56, 48), Math.toRadians(180))
-                                    .turn(Math.toRadians(180))
-                                    .back(24)
-                                    .addDisplacementMarker(() -> {
-                                        /* grab a white pixel */
-                                    })
-                                    .lineTo(new Vector2d(-56.01, 12))
-                                    .turn(Math.toRadians(-90))
+                                    .turn(Math.toRadians(-45))
+                                    .forward(17)
+                                    .turn(Math.toRadians(90))
                                     .lineTo(new Vector2d(48, 12))
                                     .strafeLeft(24)
                                     .build()
     center:
+    drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
+                                    .forward(28)
+                                    .strafeRight(18)
+                                    .forward(23)
+                                    .turn(Math.toRadians(90))
+                                    .lineTo(new Vector2d(48, 12))
+                                    .strafeLeft(24)
+                                    .build()
