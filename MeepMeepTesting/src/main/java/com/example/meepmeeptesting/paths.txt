@@ -60,3 +60,55 @@ far blue:
                                     .lineTo(new Vector2d(48, 12))
                                     .strafeLeft(24)
                                     .build()
+
+near red:
+    right:
+    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                                    .splineTo(new Vector2d(19, -36), Math.toRadians(45))
+                                    .strafeRight(10)
+                                    .turn(Math.toRadians(-45))
+                                    .forward(22)
+                                    .strafeLeft(6)
+                                    .build()
+
+    left:
+    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                                    .splineTo(new Vector2d(7, -36), Math.toRadians(135))
+                                    .strafeRight(10)
+                                    .turn(Math.toRadians(-135))
+                                    .forward(33)
+                                    .strafeRight(6)
+                                    .build()
+
+    center:
+    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                                    .forward(30)
+                                    .lineTo(new Vector2d(40, -35))
+                                    .turn(Math.toRadians(-90))
+                                    .build()
+
+near blue:
+    right:
+    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
+                                    .splineTo(new Vector2d(7, 36), Math.toRadians(-135))
+                                    .strafeLeft(10)
+                                    .turn(Math.toRadians(135))
+                                    .forward(33)
+                                    .strafeLeft(6)
+                                    .build()
+
+    left:
+    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
+                                    .splineTo(new Vector2d(19, 36), Math.toRadians(-45))
+                                    .strafeLeft(10)
+                                    .turn(Math.toRadians(45))
+                                    .forward(22)
+                                    .strafeRight(6)
+                                    .build()
+
+    center:
+    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
+                                    .forward(30)
+                                    .lineTo(new Vector2d(40, 33))
+                                    .turn(Math.toRadians(90))
+                                    .build()
