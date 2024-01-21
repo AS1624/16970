@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomus;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -14,43 +15,19 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import java.util.List;
+import org.firstinspires.ftc.teamcode.util.camera;
+import org.firstinspires.ftc.teamcode.util.AprilTags;
 
-/*
- * This file contains an example of a Linear "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode is executed.
- *
- * This particular OpMode illustrates driving a 4-motor Omni-Directional (or Holonomic) robot.
- * This code will work with either a Mecanum-Drive or an X-Drive train.
- * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
- * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
- *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
- *
- * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
- * Each motion axis is controlled by one Joystick axis.
- *
- * 1) drive:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) strafe:  Strafing right and left                     Left-joystick Right and Left
- * 3) turn:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
- *
- * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
- * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
- * the direction of all 4 motors (see code below).
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
+import java.util.ArrayList;
+import java.util.List;
 
 @Autonomous(name="RedCloseRR", group="Robot")
 
@@ -66,16 +43,48 @@ public class RedCloseRR extends LinearOpMode {
 
 
     @Override
-    public void runOpMode throws InterruptedException() {
+    public void runOpMode() {
 
         // Wait for the game to start (driver presses PLAY)
         initTfod();
         telemetryTfod();
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
+                .strafeRight(10)
+                .turn(Math.toRadians(-45))
+                .forward(17)
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48, -12))
+                .strafeRight(24)
+                .build();
+
+        TrajectorySequence center = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
+                .forward(28)
+                .strafeLeft(18)
+                .forward(23)
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48, -12))
+                .strafeRight(24)
+                .build();
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
+                .strafeLeft(10)
+                .turn(Math.toRadians(45))
+                .forward(17)
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48, -12))
+                .strafeRight(24)
+                .build();
+
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-//        while(opModeInInit()){
-//            telemetryTfod();
-//        }
+        while(opModeInInit()){
+            telemetryTfod();
+        }
 
 
         waitForStart();
@@ -87,7 +96,38 @@ public class RedCloseRR extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+            if(randomization == 0) {
+                drive.followTrajectorySequence(left);
 
+                telemetry.addData(getLocation());
+                telemetry.update();
+
+//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
+//                        .addDisplacementMarker( () -> {
+//                            /* TODO: add code to place yellow pixel */
+//                        })
+//                        .build());
+
+            }
+            else if(randomization == 1) {
+                drive.followTrajectorySequence(center);
+//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
+//                        .addDisplacementMarker( () -> {
+//                            /* TODO: add code to place yellow pixel */
+//                        })
+//                        .build());
+            }
+            else if(randomization == 2) {
+                drive.followTrajectorySequence(right);
+//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
+//                        .addDisplacementMarker( () -> {
+//                            /* TODO: add code to place yellow pixel */
+//                        })
+//                        .build());
+            }
         }
 
         visionPortal.close();
@@ -145,5 +185,50 @@ public class RedCloseRR extends LinearOpMode {
         }
 
         return 0;
+    }
+
+    private Pose2d getLocation() {
+
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+
+        ArrayList<Pose2d> locations = new ArrayList<>();
+        Pose2d location = new Pose2d();
+
+        // Step through the list of detections and display info for each one.
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+
+                Pose2d tag = AprilTags.tags[detection.id];
+                locations.add( new Pose2d(tag.getX() - detection.ftcpose.x + camera.x,
+                                          tag.getY() - detection.ftcPose.y + camera.y,
+                                     tag.getHeading() - detection.ftcPose.yaw + camera.yaw) );
+            } else {
+                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+            }
+        }   // end for() loop
+
+        for(int i = 0; i < locations.size(); i ++){
+            location = new Pose2d(location.getX() + locations.get(i).getX(),
+                                  location.getY() + locations.get(i).getY(),
+                                  location.getHeading() + locations.get(i).getHeading());
+        }
+
+        location = new Pose2d(location.getX() / locations.size(),
+                              location.getY() / locations.size(),
+                              location.getHeading() / locations.size())
+
+        // Add "key" information to telemetry
+        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+        telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+        return location;
+
     }
 }
