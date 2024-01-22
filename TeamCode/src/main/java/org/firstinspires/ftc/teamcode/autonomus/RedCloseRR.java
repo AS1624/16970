@@ -99,7 +99,8 @@ public class RedCloseRR extends LinearOpMode {
             if(randomization == 0) {
                 drive.followTrajectorySequence(left);
 
-                telemetry.addData(getLocation());
+              Pose2d location = getLocation();
+                telemetry.addData("computed location: %2.1f, %2.1f, heading %2.1f" , location.getX(), location.getY(), location.getHeading());
                 telemetry.update();
 
 //                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
