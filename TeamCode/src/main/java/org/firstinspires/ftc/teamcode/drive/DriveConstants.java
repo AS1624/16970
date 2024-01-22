@@ -110,4 +110,59 @@ public class DriveConstants {
       // see https://docs.google.com/document/d/1tyWrXDfMidwYyP_5H4mZyVgaEswhOC35gvdmP-V-5hA/edit#heading=h.61g9ixenznbx
       return 32767 / ticksPerSecond;
     }
+
+  public class AprilTags {
+      public static Pose2d[] tags = {new Pose2d(+42, 62.5, 0),
+                                          new Pose2d(+36, 62.5, 0),
+                                          new Pose2d(+30, 62.5, 0),
+                                          new Pose2d(-30, 62.5, 0),
+                                          new Pose2d(-36, 62.5, 0),
+                                          new Pose2d(-32, 62.5, 0)};
+    public AprilTags(){}
+  }
+
+  public class camera {
+    public static double x = 0;
+    public static double y = 0;
+    public static double z = 0;
+    //TODO: add camera position relative to robot
+    public static double pich = 0;
+    public static double yaw = 0;
+    //TODO: add camera ROTATION
+
+    public camera(){}
+  }
+  /*
+  all diagrams are top-down
+
+                 FRONT
+
+  ______<O>__________________________________
+  |      |                                  |
+  |      |                                  |
+  |      | + y                              |
+  |      |                                  |
+  |      |                                  |
+  |      |                                  |
+  |      |          center                  |
+  |      |_____________                     |   RIGHT
+  |          + x                            |
+  |                                         |
+  |                                         |
+  |                                         |
+  |                                         |
+  |                                         |
+  |_________________________________________|
+
+
+      FRONT
+         ____
+        |    \___  - yaw
+        |        \__
+        |           \
+        |           (camera)
+        |              \
+        *_______________|    RIGHT
+  */
+  
 }

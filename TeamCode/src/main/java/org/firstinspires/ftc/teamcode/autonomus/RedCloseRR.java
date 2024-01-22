@@ -23,8 +23,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import org.firstinspires.ftc.teamcode.util.camera;
-import org.firstinspires.ftc.teamcode.util.AprilTags;
+import org.firstinspires.ftc.teamcode.drive.opmode.DriveConstants.camera;
+import org.firstinspires.ftc.teamcode.drive.opmode.DriveConstants.AprilTags;
 
 import java.util.ArrayList;
 import java.util.List;
