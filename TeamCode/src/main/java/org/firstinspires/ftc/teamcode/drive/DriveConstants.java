@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -111,7 +112,7 @@ public class DriveConstants {
       return 32767 / ticksPerSecond;
     }
 
-  public class AprilTags {
+  public  static class AprilTags {
       public static Pose2d[] tags = {new Pose2d(+42, 62.5, 0),
                                           new Pose2d(+36, 62.5, 0),
                                           new Pose2d(+30, 62.5, 0),
@@ -121,7 +122,7 @@ public class DriveConstants {
     public AprilTags(){}
   }
 
-  public class camera {
+  public  static class camera {
     public static double x = 0;
     public static double y = 0;
     public static double z = 0;

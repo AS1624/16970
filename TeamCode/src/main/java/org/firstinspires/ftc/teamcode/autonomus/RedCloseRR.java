@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomus;
 
+import android.media.MediaRecorder;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -23,8 +25,8 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-import org.firstinspires.ftc.teamcode.drive.opmode.DriveConstants.camera;
-import org.firstinspires.ftc.teamcode.drive.opmode.DriveConstants.AprilTags;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants.camera;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +40,11 @@ public class RedCloseRR extends LinearOpMode {
     private static final String[] LABELS = {
             "Pixel",
     };
+    TfodProcessor tfod;
+    VisionPortal visionPortal;
 
     int randomization = 0;
+    AprilTagProcessor  aprilTag;
 
 
     @Override
@@ -50,34 +55,28 @@ public class RedCloseRR extends LinearOpMode {
         telemetryTfod();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
+        drive.setPoseEstimate(startPosition);
+        TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(7, -36), Math.toRadians(135))
+                .strafeRight(10)
+                .turn(Math.toRadians(-135))
+                .forward(33)
+                .strafeRight(6)
+                .build();
 
-        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
+        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .forward(30)
+                .lineTo(new Vector2d(40, -35))
+                .turn(Math.toRadians(-90))
+                .build();
+
+        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(19, -36), Math.toRadians(45))
                 .strafeRight(10)
                 .turn(Math.toRadians(-45))
-                .forward(17)
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(48, -12))
-                .strafeRight(24)
-                .build();
-
-        TrajectorySequence center = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                .forward(28)
-                .strafeLeft(18)
-                .forward(23)
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(48, -12))
-                .strafeRight(24)
-                .build();
-
-        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
-                .strafeLeft(10)
-                .turn(Math.toRadians(45))
-                .forward(17)
-                .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(48, -12))
-                .strafeRight(24)
+                .forward(22)
+                .strafeLeft(6)
                 .build();
 
         telemetry.addData("Status", "Initialized");
@@ -91,7 +90,7 @@ public class RedCloseRR extends LinearOpMode {
         //runtime.reset();
 
         boolean triggerDown = false;
-        double doorPosition = DOWN;
+        //double doorPosition = DOWN;
 
 
         // run until the end of the match (driver presses STOP)
@@ -100,7 +99,7 @@ public class RedCloseRR extends LinearOpMode {
                 drive.followTrajectorySequence(left);
 
               Pose2d location = getLocation();
-                telemetry.addData("computed location: %2.1f, %2.1f, heading %2.1f" , location.getX(), location.getY(), location.getHeading());
+                //telemetry.addData("computed location: %2.1f, %2.1f, heading %2.1f" ,location.getX(),  location.getY(), location.getHeading());
                 telemetry.update();
 
 //                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
@@ -138,7 +137,7 @@ public class RedCloseRR extends LinearOpMode {
     private void initTfod() {
 
         // Create the TensorFlow processor by using a builder.
-        tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
+         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
         if (USE_WEBCAM) {
@@ -205,7 +204,7 @@ public class RedCloseRR extends LinearOpMode {
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
 
                 Pose2d tag = AprilTags.tags[detection.id];
-                locations.add( new Pose2d(tag.getX() - detection.ftcpose.x + camera.x,
+                locations.add( new Pose2d(tag.getX() - detection.ftcPose.x + camera.x,
                                           tag.getY() - detection.ftcPose.y + camera.y,
                                      tag.getHeading() - detection.ftcPose.yaw + camera.yaw) );
             } else {
@@ -222,7 +221,7 @@ public class RedCloseRR extends LinearOpMode {
 
         location = new Pose2d(location.getX() / locations.size(),
                               location.getY() / locations.size(),
-                              location.getHeading() / locations.size())
+                              location.getHeading() / locations.size());
 
         // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
