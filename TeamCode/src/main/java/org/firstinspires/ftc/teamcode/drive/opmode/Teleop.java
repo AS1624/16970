@@ -76,20 +76,21 @@ public class Teleop extends LinearOpMode {
     private DcMotor rightFrontDrive  = null;
     private DcMotor rightBackDrive   = null;
 
-    private Servo door1Left          = null;
-    private Servo door1Right         = null;
-    private Servo door2Left          = null;
-    private Servo door2Right         = null;
+    private Servo flipDoor           = null;
+    private Servo slideDoor          = null;
+    private Servo belt               = null;
     private Servo launcher           = null;
     private Servo lever              = null;
     
     private static final double UP   = 0.3;
     private static final double DOWN = 0;
+  
+    private static final int RobotCentric = 0;
+    private static final int FeildCentric = 1;
     
+    private boolean launch           = false;
     
-    private boolean launch            = false;
-    
-    
+    private int DriveMode = RobotCentric;
 
     @Override
     public void runOpMode() {
@@ -101,12 +102,12 @@ public class Teleop extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "motor2");
         rightFrontDrive  = hardwareMap.get(DcMotor.class, "motor1");
         
-        door1Left       = hardwareMap.get(Servo.class, "servo5");
-        door1Right      = hardwareMap.get(Servo.class, "servo4");
-        door2Left       = hardwareMap.get(Servo.class, "servo2");
-        door2Right      = hardwareMap.get(Servo.class, "servo3");
-        launcher        = hardwareMap.get(Servo.class, "servo1");
-        lever           = hardwareMap.get(Servo.class, "servo0");
+        flipDoor   = hardwareMap.get(Servo.class, "servo5");
+        slideDoor  = hardwareMap.get(Servo.class, "servo4");
+        belt       = hardwareMap.get(Servo.class, "servo2");
+        door2Right = hardwareMap.get(Servo.class, "servo3");
+        launcher   = hardwareMap.get(Servo.class, "servo1");
+        lever      = hardwareMap.get(Servo.class, "servo0");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -129,12 +130,6 @@ public class Teleop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-
-            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double  drive    = - gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double  strafe   =   gamepad1.left_stick_x;
-            double  turn     =   gamepad1.right_stick_x;
-            boolean slow     =   gamepad1.right_bumper;
             
             boolean door2Set =   gamepad1.left_bumper;
             boolean door1Set =   gamepad1.right_bumper;
@@ -160,39 +155,6 @@ public class Teleop extends LinearOpMode {
                 launcherTrigger = ! launcherTrigger;
             }
             
-            
-            /*if(doorDown && !doorUp){
-                door1Position -= 0.03;
-            }
-            
-            if(!doorDown && doorUp){
-                door1Position += 0.03;
-            }*/
-            
-
-            // Combine the joystick requests for each axis-motion to determine each wheel's power.
-            // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = drive + strafe - turn;
-            double rightFrontPower = drive - strafe + turn;
-            double leftBackPower   = drive - strafe - turn;
-            double rightBackPower  = drive + strafe + turn;
-
-            // Normalize the values so no wheel power exceeds 100%
-            // This ensures that the robot maintains the desired motion.
-            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-            max = Math.max(max, Math.abs(leftBackPower));
-            max = Math.max(max, Math.abs(rightBackPower));
-            
-            //Another way
-            //max = Math.max(Math.max(Math.abs(leftBackPower), Math.abs(rightBackPower)), Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower)));
-            
-            if (max > (1.0) ) {
-                leftFrontPower  /= max;
-                rightFrontPower /= max;
-                leftBackPower   /= max;
-                rightBackPower  /= max;
-            }
-            
             if(door1Position > UP){
                 door1Position = UP;
             }
@@ -210,16 +172,56 @@ public class Teleop extends LinearOpMode {
                 door2Position = DOWN;
             }
 
-            // Send calculated power to wheels
+            if(DriveMode == RobotCentric){
+              double  drive    = - gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+              double  strafe   =   gamepad1.left_stick_x;
+              double  turn     =   gamepad1.right_stick_x;
+              boolean slow     =   gamepad1.right_bumper;
+              
+              double leftFrontPower  = drive + strafe - turn;
+              double rightFrontPower = drive - strafe + turn;
+              double leftBackPower   = drive - strafe - turn;
+              double rightBackPower  = drive + strafe + turn;
+
+              max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+              max = Math.max(max, Math.abs(leftBackPower));
+              max = Math.max(max, Math.abs(rightBackPower));
+
+              if (max > (1.0) ) {
+                  leftFrontPower  /= max;
+                  rightFrontPower /= max;
+                  leftBackPower   /= max;
+                  rightBackPower  /= max;
+              }
+            }
+            else{
+              double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+              // Rotate the movement direction counter to the bot's rotation
+              double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+              double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+              rotX = rotX * 1;  // Counteract imperfect strafing
+
+              // Denominator is the largest motor power (absolute value) or 1
+              // This ensures all the powers maintain the same ratio,
+              // but only if at least one is out of the range [-1, 1]
+              double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+              double leftFrontPower = (rotY + rotX + rx) / denominator;
+              double leftBackPower = (rotY - rotX + rx) / denominator;
+              double rightFrontPower = (rotY - rotX - rx) / denominator;
+              double rightBackPower = (rotY + rotX - rx) / denominator;
+            }
+          
             leftFrontDrive.setPower(leftFrontPower);
             rightFrontDrive.setPower(rightFrontPower);
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
             
-            door1Right.setPosition(door1Position);
-            door1Left.setPosition(- door1Position + UP);
+            slideDoor.setPosition(door1Position);
+            flipDoor.setPosition(- door1Position + UP);
             door2Right.setPosition(door2Position);
-            door2Left.setPosition(- door2Position + UP);
+            belt.setPosition(- door2Position + UP);
             launcher.setPosition(launch?0:0.5);
             lever.setPosition(0.9);
             
