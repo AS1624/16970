@@ -146,7 +146,7 @@ public class RedCloseRR extends LinearOpMode {
         // Create the TensorFlow processor by using a builder.
          tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
-        VisionPortal.Builder builder = new VisionPortal.Builder()egin;
+        VisionPortal.Builder builder = new VisionPortal.Builder();
         if (USE_WEBCAM) {
             builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
@@ -197,7 +197,7 @@ public class RedCloseRR extends LinearOpMode {
 
     private Pose2d getLocation() {
 
-        visionPortal.setProcessorEnabled(aprilTag, true);
+        aprilTag.init();
 
         List<AprilTagDetection> currentDetections = aprilTag.getFreshDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
