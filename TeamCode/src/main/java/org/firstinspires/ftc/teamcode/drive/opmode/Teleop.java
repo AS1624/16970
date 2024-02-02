@@ -49,7 +49,7 @@ public class Teleop extends LinearOpMode {
         flipDoor   = hardwareMap.get(Servo.class, "servo5");
         slideDoor  = hardwareMap.get(Servo.class, "servo4");
         belt       = hardwareMap.get(CRServo.class, "servo2");
-        door2Right = hardwareMap.get(Servo.class, "servo3");
+        //door2Right = hardwareMap.get(Servo.class, "servo3");
         launcher   = hardwareMap.get(Servo.class, "servo1");
         lever      = hardwareMap.get(Servo.class, "servo0");
 
@@ -87,7 +87,7 @@ public class Teleop extends LinearOpMode {
             }
             linkTrigger = linkSet;
             
-            if(door2Set && !flipTrigger){
+            if(flipSet && !flipTrigger){
                 //trigger1Down  = true;
                 flipPosition = (flipPosition == UP?DOWN:UP);
             }
@@ -122,30 +122,30 @@ public class Teleop extends LinearOpMode {
               }
             }
             else{
-              double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+              // double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
               // Rotate the movement direction counter to the bot's rotation
-              double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-              double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-              rotX = rotX * 1;  // Counteract imperfect strafing
+//              double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+//              double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+//
+//              rotX = rotX * 1;  // Counteract imperfect strafing
 
               // Denominator is the largest motor power (absolute value) or 1
               // This ensures all the powers maintain the same ratio,
               // but only if at least one is out of the range [-1, 1]
-              double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-              double leftFrontPower = (rotY + rotX + rx) / denominator;
-              double leftBackPower = (rotY - rotX + rx) / denominator;
-              double rightFrontPower = (rotY - rotX - rx) / denominator;
-              double rightBackPower = (rotY + rotX - rx) / denominator;
+//              double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+//              double leftFrontPower = (rotY + rotX + rx) / denominator;
+//              double leftBackPower = (rotY - rotX + rx) / denominator;
+//              double rightFrontPower = (rotY - rotX - rx) / denominator;
+//              double rightBackPower = (rotY + rotX - rx) / denominator;
             }
           
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+//            leftFrontDrive.setPower(leftFrontPower);
+//            rightFrontDrive.setPower(rightFrontPower);
+//            leftBackDrive.setPower(leftBackPower);
+//            rightBackDrive.setPower(rightBackPower);
             
-            slideDoor.setPosition(slidePosition);
+            //slideDoor.setPosition(slidePosition);
             belt.setPower(runBelt?1:0);
             launcher.setPosition(launch?0:0.5);
             lever.setPosition(0.9);
@@ -153,9 +153,11 @@ public class Teleop extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("left bumper", "%1b", linkSet);
             telemetry.update();
+
+
         }
     }}

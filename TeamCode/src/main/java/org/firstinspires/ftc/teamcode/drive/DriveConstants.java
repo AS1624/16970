@@ -89,15 +89,15 @@ public class DriveConstants {
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
      
      */
-    public static double MAX_VEL = 41.065033847087705;
-    public static double MAX_ACCEL = 41.065033847087705;
+    public static double MAX_VEL = 20; //41
+    public static double MAX_ACCEL = 20; //41
     public static double MAX_ANG_VEL = Math.toRadians(141.1);
-    public static double MAX_ANG_ACCEL = Math.toRadians(141.1);
+    public static double MAX_ANG_ACCEL = Math.toRadians(141.1);//141.1
 
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
     public static RevHubOrientationOnRobot.UsbFacingDirection USB_FACING_DIR =
-            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

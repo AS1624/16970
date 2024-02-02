@@ -46,6 +46,7 @@ public class RedCloseRR extends LinearOpMode {
     int randomization = 0;
     AprilTagProcessor  aprilTag;
 
+    Servo lever = hardwareMap.get(Servo.class, "lever");
 
     @Override
     public void runOpMode() {
@@ -59,23 +60,24 @@ public class RedCloseRR extends LinearOpMode {
         drive.setPoseEstimate(startPosition);
         TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
                 .splineTo(new Vector2d(7, -36), Math.toRadians(135))
-                .strafeRight(10)
+                .back(10)
                 .turn(Math.toRadians(-135))
                 .forward(33)
-                .strafeRight(6)
+                .strafeLeft(6)
                 .build();
 
         TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
                 .forward(30)
+                .back(2)
                 .lineTo(new Vector2d(40, -35))
                 .turn(Math.toRadians(-90))
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
                 .splineTo(new Vector2d(19, -36), Math.toRadians(45))
-                .strafeRight(10)
+                .back(10)
                 .turn(Math.toRadians(-45))
-                .forward(22)
+                .forward(35)
                 .strafeLeft(6)
                 .build();
 
@@ -102,31 +104,31 @@ public class RedCloseRR extends LinearOpMode {
                 //telemetry.addData("computed location: %2.1f, %2.1f, heading %2.1f" ,location.getX(),  location.getY(), location.getHeading());
                 telemetry.update();
 
-//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
-//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
-//                        .addDisplacementMarker( () -> {
-//                            /* TODO: add code to place yellow pixel */
-//                        })
-//                        .build());
+                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+                        .lineTo(new Vector2d( 52, -34))
+                        .addDisplacementMarker( () -> {
+                            lever.setPosition(1);
+                        })
+                        .build());
 
             }
             else if(randomization == 1) {
                 drive.followTrajectorySequence(center);
-//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
-//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
-//                        .addDisplacementMarker( () -> {
-//                            /* TODO: add code to place yellow pixel */
-//                        })
-//                        .build());
+                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+                        .lineTo(new Vector2d( 52, -40))
+                        .addDisplacementMarker( () -> {
+                            lever.setPosition(1);
+                        })
+                        .build());
             }
             else if(randomization == 2) {
                 drive.followTrajectorySequence(right);
-//                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
-//                        .lineTo(new Vector2d( /* TODO: add x y of robot when ready to place yellow pixel */))
-//                        .addDisplacementMarker( () -> {
-//                            /* TODO: add code to place yellow pixel */
-//                        })
-//                        .build());
+                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+                        .lineTo(new Vector2d( 52, -46))
+                        .addDisplacementMarker( () -> {
+                            lever.setPosition(1);
+                        })
+                        .build());
             }
         }
 
