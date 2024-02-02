@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.autonomus;
 
 import android.media.MediaRecorder;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -46,7 +48,7 @@ public class RedCloseRR extends LinearOpMode {
     int randomization = 0;
     AprilTagProcessor  aprilTag;
 
-    Servo lever = hardwareMap.get(Servo.class, "lever");
+    Servo lever;
 
     @Override
     public void runOpMode() {
@@ -55,6 +57,9 @@ public class RedCloseRR extends LinearOpMode {
         initTfod();
         telemetryTfod();
 
+        lever = hardwareMap.get(Servo.class, "lever");
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
         drive.setPoseEstimate(startPosition);
@@ -62,14 +67,14 @@ public class RedCloseRR extends LinearOpMode {
                 .splineTo(new Vector2d(7, -36), Math.toRadians(135))
                 .back(10)
                 .turn(Math.toRadians(-135))
-                .forward(33)
+                .forward(30)
                 .strafeLeft(6)
                 .build();
 
         TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
                 .forward(30)
                 .back(2)
-                .lineTo(new Vector2d(40, -35))
+                .lineTo(new Vector2d(37, -35))
                 .turn(Math.toRadians(-90))
                 .build();
 
@@ -77,7 +82,7 @@ public class RedCloseRR extends LinearOpMode {
                 .splineTo(new Vector2d(19, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(-45))
-                .forward(35)
+                .forward(32)
                 .strafeLeft(6)
                 .build();
 
@@ -103,13 +108,13 @@ public class RedCloseRR extends LinearOpMode {
               Pose2d location = getLocation();
                 //telemetry.addData("computed location: %2.1f, %2.1f, heading %2.1f" ,location.getX(),  location.getY(), location.getHeading());
                 telemetry.update();
-
-                drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
+                getLocation();
+                /*drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
                         .lineTo(new Vector2d( 52, -34))
                         .addDisplacementMarker( () -> {
-                            lever.setPosition(1);
+                            lever.setPosition(0.65);
                         })
-                        .build());
+                        .build());*/
 
             }
             else if(randomization == 1) {
@@ -117,7 +122,7 @@ public class RedCloseRR extends LinearOpMode {
                 drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
                         .lineTo(new Vector2d( 52, -40))
                         .addDisplacementMarker( () -> {
-                            lever.setPosition(1);
+                            lever.setPosition(0.65);
                         })
                         .build());
             }
@@ -126,7 +131,7 @@ public class RedCloseRR extends LinearOpMode {
                 drive.followTrajectorySequence( drive.trajectorySequenceBuilder(getLocation())
                         .lineTo(new Vector2d( 52, -46))
                         .addDisplacementMarker( () -> {
-                            lever.setPosition(1);
+                            lever.setPosition(0.65);
                         })
                         .build());
             }
@@ -141,7 +146,7 @@ public class RedCloseRR extends LinearOpMode {
         // Create the TensorFlow processor by using a builder.
          tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
-        VisionPortal.Builder builder = new VisionPortal.Builder();
+        VisionPortal.Builder builder = new VisionPortal.Builder()egin;
         if (USE_WEBCAM) {
             builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
         } else {
@@ -189,11 +194,14 @@ public class RedCloseRR extends LinearOpMode {
         return 0;
     }
 
+
     private Pose2d getLocation() {
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
+        visionPortal.setProcessorEnabled(aprilTag, true);
 
+        List<AprilTagDetection> currentDetections = aprilTag.getFreshDetections();
+        telemetry.addData("# AprilTags Detected", currentDetections.size());
+        /*
         ArrayList<Pose2d> locations = new ArrayList<>();
         Pose2d location = new Pose2d();
 
@@ -229,7 +237,8 @@ public class RedCloseRR extends LinearOpMode {
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
-
+        */
+        Pose2d location = new Pose2d(0,0,0);
         return location;
 
     }

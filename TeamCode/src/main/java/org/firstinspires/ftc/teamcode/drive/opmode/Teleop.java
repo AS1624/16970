@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -21,7 +22,7 @@ public class Teleop extends LinearOpMode {
     private DcMotor rightBackDrive   = null;
 
     private Servo flipDoor           = null;
-    private Servo slideDoor          = null;
+    private Servo linkDoor          = null;
     private CRServo belt             = null;
     private Servo launcher           = null;
     private Servo lever              = null;
@@ -36,6 +37,10 @@ public class Teleop extends LinearOpMode {
     
     private int DriveMode = RobotCentric;
 
+    double leftFrontPower;
+    double rightFrontPower;
+    double rightBackPower;
+    double leftBackPower;
     @Override
     public void runOpMode() {
 
@@ -46,12 +51,11 @@ public class Teleop extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "motor2");
         rightFrontDrive  = hardwareMap.get(DcMotor.class, "motor1");
         
-        flipDoor   = hardwareMap.get(Servo.class, "servo5");
-        slideDoor  = hardwareMap.get(Servo.class, "servo4");
-        belt       = hardwareMap.get(CRServo.class, "servo2");
-        //door2Right = hardwareMap.get(Servo.class, "servo3");
-        launcher   = hardwareMap.get(Servo.class, "servo1");
-        lever      = hardwareMap.get(Servo.class, "servo0");
+        flipDoor   = hardwareMap.get(Servo.class, "flip");
+        linkDoor  = hardwareMap.get(Servo.class, "link");
+        belt       = hardwareMap.get(CRServo.class, "belt");
+        //launcher   = hardwareMap.get(Servo.class, "servo1");
+        lever      = hardwareMap.get(Servo.class, "lever");
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -68,15 +72,15 @@ public class Teleop extends LinearOpMode {
         boolean linkTrigger = false;
         boolean flipTrigger = false;
         double linkPosition = DOWN;
-        double flipPosition = DOWN;
+        double flipPosition = UP; // up and down are flipped
         
         
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
             
-            boolean flipSet         = gamepad1.left_bumper;
-            boolean linkSet         = gamepad1.right_bumper;
+            boolean flipSet         = gamepad1.right_bumper;
+            boolean linkSet         = gamepad1.left_bumper;
             boolean launcherTrigger = gamepad1.y;
             boolean runBelt         = gamepad2.a;
 
@@ -100,15 +104,15 @@ public class Teleop extends LinearOpMode {
             
 
             if(DriveMode == RobotCentric){
-              double  drive    = - gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-              double  strafe   =   gamepad1.left_stick_x;
-              double  turn     =   gamepad1.right_stick_x;
-              boolean slow     =   gamepad1.right_bumper;
+              double  drive    =   gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+              double  strafe   = - gamepad1.left_stick_x;
+              double  turn     = - gamepad1.right_stick_x;
+              //boolean slow     =   gamepad1.right_bumper;
               
-              double leftFrontPower  = drive + strafe - turn;
-              double rightFrontPower = drive - strafe + turn;
-              double leftBackPower   = drive - strafe - turn;
-              double rightBackPower  = drive + strafe + turn;
+              leftFrontPower  = drive + strafe - turn;
+              rightFrontPower = drive - strafe + turn;
+              leftBackPower   = drive - strafe - turn;
+              rightBackPower  = drive + strafe + turn;
 
               max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
               max = Math.max(max, Math.abs(leftBackPower));
@@ -122,39 +126,42 @@ public class Teleop extends LinearOpMode {
               }
             }
             else{
-              // double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+                /* TODO: fix
+                double botHeading = imu.getRobotYawPitchRollAngles().getYaw(BNO055IMU.AngleUnit.RADIANS);
 
               // Rotate the movement direction counter to the bot's rotation
-//              double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-//              double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-//
-//              rotX = rotX * 1;  // Counteract imperfect strafing
+                double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+                double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+    //
+                rotX = rotX * 1;  // Counteract imperfect strafing
 
-              // Denominator is the largest motor power (absolute value) or 1
-              // This ensures all the powers maintain the same ratio,
-              // but only if at least one is out of the range [-1, 1]
-//              double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-//              double leftFrontPower = (rotY + rotX + rx) / denominator;
-//              double leftBackPower = (rotY - rotX + rx) / denominator;
-//              double rightFrontPower = (rotY - rotX - rx) / denominator;
-//              double rightBackPower = (rotY + rotX - rx) / denominator;
+                  // Denominator is the largest motor power (absolute value) or 1
+                  // This ensures all the powers maintain the same ratio,
+                  // but only if at least one is out of the range [-1, 1]
+                double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+                double leftFrontPower = (rotY + rotX + rx) / denominator;
+                double leftBackPower = (rotY - rotX + rx) / denominator;
+                double rightFrontPower = (rotY - rotX - rx) / denominator;
+                double rightBackPower = (rotY + rotX - rx) / denominator;
+                */
             }
-          
-//            leftFrontDrive.setPower(leftFrontPower);
-//            rightFrontDrive.setPower(rightFrontPower);
-//            leftBackDrive.setPower(leftBackPower);
-//            rightBackDrive.setPower(rightBackPower);
+
+          leftFrontDrive.setPower(leftFrontPower);
+          rightFrontDrive.setPower(rightFrontPower);
+          leftBackDrive.setPower(leftBackPower);
+          rightBackDrive.setPower(rightBackPower);
             
-            //slideDoor.setPosition(slidePosition);
+            linkDoor.setPosition(linkPosition);
             belt.setPower(runBelt?1:0);
-            launcher.setPosition(launch?0:0.5);
-            lever.setPosition(0.9);
+            flipDoor.setPosition(flipPosition);
+            //launcher.setPosition(launch?0:0.5);
+            lever.setPosition(0); // 0.1 = 10 degrees ish
             
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            //telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
-            //telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.addData("left bumper", "%1b", linkSet);
             telemetry.update();
 
