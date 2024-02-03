@@ -53,7 +53,7 @@ public class BlueCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(45))
                 .forward(30)
                 .strafeRight(6)
-                .lineTo(new Vector2d( 57, 34))
+                .lineTo(new Vector2d( 57, 38))
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0.68);
                     sleep(1000);

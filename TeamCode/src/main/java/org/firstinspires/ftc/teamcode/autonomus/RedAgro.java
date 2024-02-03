@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="RedAgroRR", group="Robot")
+@Autonomous(name="RedFarRR", group="Robot")
 
 public class RedAgro extends LinearOpMode {
 
@@ -74,7 +74,7 @@ public class RedAgro extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d(48, -11))
                 .strafeRight(18)
-                .lineTo(new Vector2d( 57, -30))
+                .lineTo(new Vector2d( 57, -34))
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0.68);
                     sleep(1000);

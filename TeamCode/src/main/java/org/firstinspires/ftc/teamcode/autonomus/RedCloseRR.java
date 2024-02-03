@@ -69,7 +69,7 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-135))
                 .forward(30)
                 .strafeLeft(6)
-                .lineTo(new Vector2d( 57, -30))
+                .lineTo(new Vector2d( 57, -34))
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0.68);
                     sleep(1000);
