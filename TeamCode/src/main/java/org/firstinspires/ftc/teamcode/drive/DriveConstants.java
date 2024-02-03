@@ -92,7 +92,7 @@ public class DriveConstants {
     public static double MAX_VEL = 20; //41
     public static double MAX_ACCEL = 20; //41
     public static double MAX_ANG_VEL = Math.toRadians(141.1);
-    public static double MAX_ANG_ACCEL = Math.toRadians(141.1);//141.1
+    public static double MAX_ANG_ACCEL = Math.toRadians(30);//141.1
 
     public static RevHubOrientationOnRobot.LogoFacingDirection LOGO_FACING_DIR =
             RevHubOrientationOnRobot.LogoFacingDirection.UP;
@@ -123,9 +123,9 @@ public class DriveConstants {
   }
 
   public  static class camera {
-    public static double x = 0;
-    public static double y = 0;
-    public static double z = 0;
+    public static double x = 12.75 / 2;
+    public static double y = 4 + 1.0 / 8;
+    public static double z = 7 + 3.0 / 4;
     //TODO: add camera position relative to robot
     public static double pich = 0;
     public static double yaw = 0;
