@@ -1,9 +1,10 @@
 far red:
     center:
     drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                                    .forward(28)
+                                    .forward(32)
+                                    .back(2)
                                     .strafeLeft(18)
-                                    .forward(23)
+                                    .forward(21)
                                     .turn(Math.toRadians(-90))
                                     .lineTo(new Vector2d(48, -12))
                                     .strafeRight(24)
@@ -13,23 +14,32 @@ far red:
     left:
     drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
                                     .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
-                                    .strafeRight(10)
+                                    .back(10)
                                     .turn(Math.toRadians(-45))
-                                    .forward(17)
+                                    .forward(31)
                                     .turn(Math.toRadians(-90))
                                     .lineTo(new Vector2d(48, -12))
                                     .strafeRight(24)
                                     .build()
 
     right:
-    drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                                    .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
-                                    .strafeLeft(10)
+    .splineTo(new Vector2d(-30, -36), Math.toRadians(45))
+                                    .back(10)
                                     .turn(Math.toRadians(45))
-                                    .forward(17)
+                                    .forward(30)
                                     .turn(Math.toRadians(-90))
-                                    .lineTo(new Vector2d(48, -12))
+                                    .forward(84)
                                     .strafeRight(24)
+                                    .lineTo(new Vector2d( 57, -38))
+                                    .addDisplacementMarker( () -> {
+                                        //lever.setPosition(0.68);
+                                       /// sleep(1000);
+                                    })
+                                    .back(4)
+                                    .addDisplacementMarker( () -> {
+                                        //lever.setPosition(0.6);
+                                        //sleep(1000);
+                                    })
                                     .build()
 far blue:
     right:

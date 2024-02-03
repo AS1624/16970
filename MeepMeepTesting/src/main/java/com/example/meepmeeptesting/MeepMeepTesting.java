@@ -16,12 +16,14 @@ public class MeepMeepTesting {
                 .setConstraints(41, 41, Math.toRadians(141.1), Math.toRadians(141.1), 13.21)
                 .setDimensions(14.25, 14)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
-                                .splineTo(new Vector2d(19, -36), Math.toRadians(45))
-                                .back(10)
-                                .turn(Math.toRadians(-45))
-                                .forward(35)
-                                .strafeLeft(6)
+                        drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
+                                .forward(32)
+                                .back(2)
+                                .strafeLeft(18)
+                                .forward(21)
+                                .turn(Math.toRadians(-90))
+                                .lineTo(new Vector2d(48, -12))
+                                .strafeRight(24)
                                 .build()
                 );
 
