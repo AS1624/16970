@@ -48,75 +48,14 @@ public class BlueCloseRR extends LinearOpMode {
         drive.setPoseEstimate(startPosition);
         TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
                 .splineTo(new Vector2d(20, 37), Math.toRadians(-45))
-                .back(12)
-                .turn(Math.toRadians(45))
-                .forward(30)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 34))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
                 .build();
 
         TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
                 .forward(32)
-                .back(2)
-                .lineTo(new Vector2d(37, 35))
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d( 57, 43))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
                 .splineTo(new Vector2d(19, 37), Math.toRadians(-135))
-                .back(10)
-                .turn(Math.toRadians(135))
-                .forward(32)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 45))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
                 .build();
 
         telemetry.addData("Status", "Initialized");

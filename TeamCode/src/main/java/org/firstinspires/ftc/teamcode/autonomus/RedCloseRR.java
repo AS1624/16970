@@ -45,7 +45,7 @@ public class RedCloseRR extends LinearOpMode {
     TfodProcessor tfod;
     VisionPortal visionPortal;
 
-    int randomization = 0;
+    int randomization = 2;
     AprilTagProcessor  aprilTag;
 
     Servo lever;
@@ -69,12 +69,16 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-135))
                 .forward(30)
                 .strafeLeft(6)
-                .lineTo(new Vector2d( 57, -32))
+                .lineTo(new Vector2d( 57, -30))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.67);
+                    lever.setPosition(0.68);
                     sleep(1000);
                 })
-                .back(3)
+                .back(4)
+                .addDisplacementMarker( () -> {
+                    lever.setPosition(0.6);
+                    sleep(1000);
+                })
                 .waitSeconds(1)
                 .back(3)
                 .waitSeconds(1)
@@ -90,12 +94,16 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-90))
                 .lineTo(new Vector2d( 57, -38))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.67);
+                    lever.setPosition(0.68);
                     sleep(1000);
                 })
-                .back(3)
+                .back(4)
+                .addDisplacementMarker( () -> {
+                    lever.setPosition(0.6);
+                    sleep(1000);
+                })
                 .waitSeconds(1)
-                .back(3)
+                .back(4)
                 .waitSeconds(1)
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0);
@@ -103,17 +111,17 @@ public class RedCloseRR extends LinearOpMode {
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(20, -36), Math.toRadians(45))
+                .splineTo(new Vector2d(19, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(-45))
                 .forward(32)
                 .strafeLeft(6)
-                .lineTo(new Vector2d( 57, -45))
+                .lineTo(new Vector2d( 57, -46))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.67);
+                    lever.setPosition(0.68);
                     sleep(1000);
                 })
-                .back(3)
+                .back(4)
                 .waitSeconds(1)
                 .back(3)
                 .waitSeconds(1)
@@ -167,7 +175,7 @@ public class RedCloseRR extends LinearOpMode {
                 .addProcessors(tfod)
                 .build();
 
-        tfod.setMinResultConfidence(0.7f);
+        tfod.setMinResultConfidence(0.68f);
 
     }
     private void telemetryTfod() {
@@ -197,14 +205,14 @@ public class RedCloseRR extends LinearOpMode {
     private int posFind(double x){
         // int pos = 0;
 
-        if(x <= 400){//TODO: make correct
-            return 1;
+        if(x <= 120){//TODO: make correct
+            return 0;
         }
         else if (x <= 640){
-            return 2;
+            return 1;
         }
 
-        return 0;
+        return 2;
     }
 
 
