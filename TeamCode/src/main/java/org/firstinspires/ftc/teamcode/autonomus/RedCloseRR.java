@@ -216,7 +216,7 @@ public class RedCloseRR extends LinearOpMode {
     }
 
 
-    /*private Pose2d getLocation() {
+    private Pose2d getLocation() {
 
 
         List<AprilTagDetection> currentTagDetections = aprilTag.getDetections();
@@ -243,7 +243,7 @@ public class RedCloseRR extends LinearOpMode {
             }
         }   // end for() loop
 
-        /*for(int i = 0; i < locations.size(); i ++){
+        for(int i = 0; i < locations.size(); i ++){
             location = new Pose2d(location.getX() + locations.get(i).getX(),
                                   location.getY() + locations.get(i).getY(),
                                   location.getHeading() + locations.get(i).getHeading());
@@ -261,5 +261,5 @@ public class RedCloseRR extends LinearOpMode {
         //Pose2d location = new Pose2d(0,0,0);
         return location;
 
-    }*/
+    }
 }

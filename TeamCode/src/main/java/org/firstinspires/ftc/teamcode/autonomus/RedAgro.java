@@ -67,7 +67,7 @@ public class RedAgro extends LinearOpMode {
 
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
+                .splineTo(new Vector2d(-42, -36), Math.toRadians(135))
                 .back(10)
                 .turn(Math.toRadians(-45))
                 .forward(31)
@@ -109,7 +109,7 @@ public class RedAgro extends LinearOpMode {
 
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                .splineTo(new Vector2d(-30, -36), Math.toRadians(45))
+                .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(45))
                 .forward(30)

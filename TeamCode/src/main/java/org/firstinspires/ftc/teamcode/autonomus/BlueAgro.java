@@ -50,7 +50,7 @@ public class BlueAgro extends LinearOpMode {
 
 
         TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(-40, 36), Math.toRadians(225))
+                .splineTo(new Vector2d(-41, 36), Math.toRadians(225))
                 .back(10)
                 .turn(Math.toRadians(45))
                 .forward(30)
@@ -70,7 +70,7 @@ public class BlueAgro extends LinearOpMode {
                 .build();
 
         TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(-30, 36), Math.toRadians(315))
+                .splineTo(new Vector2d(-28, 36), Math.toRadians(315))
                 .back(10)
                 .turn(Math.toRadians(-45))
                 .forward(30)
