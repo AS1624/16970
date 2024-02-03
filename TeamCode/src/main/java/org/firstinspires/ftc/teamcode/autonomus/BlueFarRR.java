@@ -18,7 +18,7 @@ import java.util.List;
 
 @Autonomous(name="BlueCloseRR", group="Robot")
 
-public class BlueCloseRR extends LinearOpMode {
+public class BlueFarRR extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/BluePropp.tflite";

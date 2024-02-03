@@ -18,7 +18,7 @@ import java.util.List;
 
 @Autonomous(name="BlueCloseRR", group="Robot")
 
-public class BlueCloseRR extends LinearOpMode {
+public class BlueAgro extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/BluePropp.tflite";
@@ -44,16 +44,20 @@ public class BlueCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPosition = new Pose2d(13, 63, Math.toRadians(270) );
+        Pose2d startPosition = new Pose2d(-35, 63, Math.toRadians(270) );
         drive.setPoseEstimate(startPosition);
 
-        TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(20, 37), Math.toRadians(-45))
-                .back(12)
+
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
+                .splineTo(new Vector2d(-40, 36), Math.toRadians(225))
+                .back(10)
                 .turn(Math.toRadians(45))
                 .forward(30)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 34))
+                .turn(Math.toRadians(90))
+                .forward(84)
+                .strafeLeft(24)
+                .lineTo(new Vector2d( 57, 38))
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0.68);
                     sleep(1000);
@@ -63,20 +67,37 @@ public class BlueCloseRR extends LinearOpMode {
                     lever.setPosition(0.6);
                     sleep(1000);
                 })
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
+                .build();
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
+                .splineTo(new Vector2d(-30, 36), Math.toRadians(315))
+                .back(10)
+                .turn(Math.toRadians(-45))
+                .forward(30)
+                .turn(Math.toRadians(90))
+                .forward(84)
+                .strafeLeft(24)
+                .lineTo(new Vector2d( 57, 38))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
+                    lever.setPosition(0.68);
+                    sleep(1000);
+                })
+                .back(4)
+                .addDisplacementMarker( () -> {
+                    lever.setPosition(0.6);
+                    sleep(1000);
                 })
                 .build();
 
-        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
+        TrajectorySequence center = drive.trajectorySequenceBuilder(new Pose2d(-35, 63, Math.toRadians(270) ) )
                 .forward(32)
                 .back(2)
-                .lineTo(new Vector2d(37, 35))
+                .strafeRight(18)
+                .forward(21)
                 .turn(Math.toRadians(90))
-                .lineTo(new Vector2d( 57, 43))
+                .lineTo(new Vector2d(48, 12))
+                .strafeLeft(24)
+                .lineTo(new Vector2d( 57, 38))
                 .addDisplacementMarker( () -> {
                     lever.setPosition(0.68);
                     sleep(1000);
@@ -86,47 +107,7 @@ public class BlueCloseRR extends LinearOpMode {
                     lever.setPosition(0.6);
                     sleep(1000);
                 })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
                 .build();
-
-        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(19, 37), Math.toRadians(-135))
-                .back(10)
-                .turn(Math.toRadians(135))
-                .forward(32)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 45))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
-                .build();
-
-        telemetry.addData("Status", "Initialized");
-        while(opModeInInit()){
-            //telemetry.addData("pos", getLocation());
-            telemetry.update();
-            telemetryTfod();
-
-        }
 
 
         waitForStart();

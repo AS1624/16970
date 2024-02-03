@@ -1,34 +1,51 @@
 package org.firstinspires.ftc.teamcode.autonomus;
 
+import android.media.MediaRecorder;
+
+import androidx.annotation.NonNull;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants.camera;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
+
+import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="BlueCloseRR", group="Robot")
+@Autonomous(name="RedCloseRR", group="Robot")
 
-public class BlueCloseRR extends LinearOpMode {
+public class RedAgro extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/BluePropp.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedPropp.tflite";
     private static final String[] LABELS = {
             "Pixel",
     };
     TfodProcessor tfod;
     VisionPortal visionPortal;
 
-    int randomization = 0;
+    int randomization = 2;
     AprilTagProcessor  aprilTag;
 
     Servo lever;
@@ -44,79 +61,70 @@ public class BlueCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPosition = new Pose2d(13, 63, Math.toRadians(270) );
+        Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
         drive.setPoseEstimate(startPosition);
 
-        TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(20, 37), Math.toRadians(-45))
-                .back(12)
-                .turn(Math.toRadians(45))
-                .forward(30)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 34))
+
+
+        TrajectorySequence left = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(-41, -36), Math.toRadians(135))
+                .back(10)
+                .turn(Math.toRadians(-45))
+                .forward(31)
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48, -12))
+                .strafeRight(18)
+                .lineTo(new Vector2d( 57, -30))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
+                    //lever.setPosition(0.68);
+                    /// sleep(1000);
                 })
                 .back(4)
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
+                    //lever.setPosition(0.6);
+                    //sleep(1000);
                 })
                 .build();
 
-        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
+
+        TrajectorySequence center = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90) ) )
                 .forward(32)
                 .back(2)
-                .lineTo(new Vector2d(37, 35))
-                .turn(Math.toRadians(90))
-                .lineTo(new Vector2d( 57, 43))
+                .strafeLeft(18)
+                .forward(21)
+                .turn(Math.toRadians(-90))
+                .lineTo(new Vector2d(48, -12))
+                .strafeRight(24)
+                .lineTo(new Vector2d( 57, -38))
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
+                    //lever.setPosition(0.68);
+                    /// sleep(1000);
                 })
                 .back(4)
                 .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
+                    //lever.setPosition(0.6);
+                    //sleep(1000);
                 })
                 .build();
 
-        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(19, 37), Math.toRadians(-135))
+
+        TrajectorySequence right = drive.trajectorySequenceBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                .splineTo(new Vector2d(-30, -36), Math.toRadians(45))
                 .back(10)
-                .turn(Math.toRadians(135))
-                .forward(32)
-                .strafeRight(6)
-                .lineTo(new Vector2d( 57, 45))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
+                .turn(Math.toRadians(45))
+                .forward(30)
+                .turn(Math.toRadians(-90))
+                .forward(84)
+                .strafeRight(24)
+                .lineTo(new Vector2d(57, -38))
+                .addDisplacementMarker(() -> {
+                    //lever.setPosition(0.68);
+                    /// sleep(1000);
                 })
                 .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .back(3)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
+                .addDisplacementMarker(() -> {
+                    //lever.setPosition(0.6);
+                    //sleep(1000);
                 })
                 .build();
 
@@ -165,7 +173,7 @@ public class BlueCloseRR extends LinearOpMode {
                 .addProcessors(tfod)
                 .build();
 
-        tfod.setMinResultConfidence(0.7f);
+        tfod.setMinResultConfidence(0.68f);
 
     }
     private void telemetryTfod() {
@@ -195,7 +203,7 @@ public class BlueCloseRR extends LinearOpMode {
     private int posFind(double x){
         // int pos = 0;
 
-        if(x <= 400){//TODO: make correct
+        if(x <= 120){//TODO: make correct
             return 0;
         }
         else if (x <= 640){
