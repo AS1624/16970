@@ -76,13 +76,13 @@ public class RedAgro extends LinearOpMode {
                 .strafeRight(18)
                 .lineTo(new Vector2d( 57, -30))
                 .addDisplacementMarker( () -> {
-                    //lever.setPosition(0.68);
-                    /// sleep(1000);
+                    lever.setPosition(0.68);
+                    sleep(1000);
                 })
                 .back(4)
                 .addDisplacementMarker( () -> {
-                    //lever.setPosition(0.6);
-                    //sleep(1000);
+                    lever.setPosition(0.6);
+                    sleep(1000);
                 })
                 .build();
 
@@ -97,13 +97,13 @@ public class RedAgro extends LinearOpMode {
                 .strafeRight(24)
                 .lineTo(new Vector2d( 57, -38))
                 .addDisplacementMarker( () -> {
-                    //lever.setPosition(0.68);
-                    /// sleep(1000);
+                    lever.setPosition(0.68);
+                    sleep(1000);
                 })
                 .back(4)
                 .addDisplacementMarker( () -> {
-                    //lever.setPosition(0.6);
-                    //sleep(1000);
+                    lever.setPosition(0.6);
+                    sleep(1000);
                 })
                 .build();
 
@@ -118,13 +118,13 @@ public class RedAgro extends LinearOpMode {
                 .strafeRight(24)
                 .lineTo(new Vector2d(57, -38))
                 .addDisplacementMarker(() -> {
-                    //lever.setPosition(0.68);
-                    /// sleep(1000);
+                    lever.setPosition(0.68);
+                    sleep(1000);
                 })
                 .back(4)
                 .addDisplacementMarker(() -> {
-                    //lever.setPosition(0.6);
-                    //sleep(1000);
+                    lever.setPosition(0.6);
+                    sleep(1000);
                 })
                 .build();
 
