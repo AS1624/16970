@@ -16,7 +16,7 @@ import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.List;
 
-@Autonomous(name="BlueCloseRR", group="Robot")
+@Autonomous(name="BlueAgro", group="Robot")
 
 public class BlueAgro extends LinearOpMode {
 

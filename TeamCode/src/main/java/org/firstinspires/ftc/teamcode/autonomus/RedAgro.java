@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="RedCloseRR", group="Robot")
+@Autonomous(name="RedAgroRR", group="Robot")
 
 public class RedAgro extends LinearOpMode {
 
@@ -70,9 +70,9 @@ public class RedAgro extends LinearOpMode {
                 .splineTo(new Vector2d(-42, -36), Math.toRadians(135))
                 .back(10)
                 .turn(Math.toRadians(-45))
-                .forward(31)
+                .forward(32)
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(48, -12))
+                .lineTo(new Vector2d(48, -11))
                 .strafeRight(18)
                 .lineTo(new Vector2d( 57, -30))
                 .addDisplacementMarker( () -> {
@@ -91,9 +91,9 @@ public class RedAgro extends LinearOpMode {
                 .forward(32)
                 .back(2)
                 .strafeLeft(18)
-                .forward(21)
+                .forward(22)
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d(48, -12))
+                .lineTo(new Vector2d(48, -11))
                 .strafeRight(24)
                 .lineTo(new Vector2d( 57, -38))
                 .addDisplacementMarker( () -> {
@@ -112,7 +112,7 @@ public class RedAgro extends LinearOpMode {
                 .splineTo(new Vector2d(-29, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(45))
-                .forward(30)
+                .forward(31)
                 .turn(Math.toRadians(-90))
                 .forward(84)
                 .strafeRight(24)

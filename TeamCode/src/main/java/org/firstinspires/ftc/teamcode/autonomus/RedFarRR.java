@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="RedCloseRR", group="Robot")
+@Autonomous(name="RedFarRR", group="Robot")
 
 public class RedFarRR extends LinearOpMode {
 
