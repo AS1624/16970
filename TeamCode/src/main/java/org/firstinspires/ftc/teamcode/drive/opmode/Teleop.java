@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @TeleOp(name="Teleop", group="Linear OpMode")
 
@@ -20,6 +24,8 @@ public class Teleop extends LinearOpMode {
     private DcMotor leftBackDrive   = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive  = null;
+    private DcMotor rightHang  = null;
+    private DcMotor leftHang  = null;
 
     private Servo flipDoor          = null;
     private Servo linkDoor          = null;
@@ -37,7 +43,7 @@ public class Teleop extends LinearOpMode {
     
     private boolean launch           = false;
     
-    private int DriveMode = RobotCentric;
+    private int DriveMode = FeildCentric;
 
     double leftFrontPower;
     double rightFrontPower;
@@ -52,7 +58,10 @@ public class Teleop extends LinearOpMode {
         leftBackDrive   = hardwareMap.get(DcMotor.class, "motor3");
         rightBackDrive = hardwareMap.get(DcMotor.class, "motor2");
         rightFrontDrive  = hardwareMap.get(DcMotor.class, "motor1");
-        
+
+        rightHang  = hardwareMap.get(DcMotor.class, "rightHang");
+        leftHang  = hardwareMap.get(DcMotor.class, "leftHang");
+
         flipDoor   = hardwareMap.get(Servo.class, "flip");
         linkDoor  = hardwareMap.get(Servo.class, "link");
         belt       = hardwareMap.get(CRServo.class, "belt");
@@ -95,11 +104,11 @@ public class Teleop extends LinearOpMode {
           boolean runBelt         = gamepad2.a;
 
 
-          boolean linkUp          = gamepad2.right_bumper;
-          boolean linkDown        = gamepad2.trigger > 0.7;
+          boolean linkUp          = gamepad1.right_bumper;
+          boolean linkDown        = gamepad1.right_trigger > 0.7;
 
-          boolean flipUp          = gamepad2.left_bumper;
-          boolean flipDown        = gamepad2.trigger > 0.7;
+          boolean flipUp          = gamepad1.left_bumper;
+          boolean flipDown        = gamepad1.left_trigger > 0.7;
 
           double hangSpeed = (gamepad2.dpad_up ? 1.0 : 0.0) + (gamepad2.dpad_down ? -1.0 : 0.0);
 
@@ -124,7 +133,7 @@ public class Teleop extends LinearOpMode {
 ]*/
 
             //two driver
-          if()
+
           
           if (gamepad1.options) {
               imu.resetYaw();
@@ -157,7 +166,7 @@ public class Teleop extends LinearOpMode {
             double y = gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
               
-            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(BNO055IMU.AngleUnit.RADIANS);
+            double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -180,12 +189,29 @@ public class Teleop extends LinearOpMode {
           rightFrontDrive.setPower(rightFrontPower);
           leftBackDrive.setPower(leftBackPower);
           rightBackDrive.setPower(rightBackPower);
+
+          rightHang.setPower(-hangSpeed);
+          leftHang.setPower(hangSpeed);
           
-          linkDoor.setPosition(linkPosition);
+          //linkDoor.setPosition(linkPosition);
           belt.setPower(runBelt?1:0);
-          flipDoor.setPosition(flipPosition);
+          //flipDoor.setPosition(flipPosition);
           //launcher.setPosition(launch?0:0.5);
-          lever.setPosition(0); // 0.1 = 10 degrees ish
+          lever.setPosition(0.2); // 0.1 = 10 degrees ish
+
+            if(linkUp){
+                linkDoor.setPosition(UP);
+            }
+            if(linkDown){
+                linkDoor.setPosition(DOWN);
+            }
+
+            if(flipUp){
+                flipDoor.setPosition(DOWN);
+            }
+            if(flipDown){
+                flipDoor.setPosition(UP);
+            }
           
 
           // Show the elapsed game time and wheel power.

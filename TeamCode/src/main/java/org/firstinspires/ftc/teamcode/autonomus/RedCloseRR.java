@@ -132,7 +132,7 @@ public class RedCloseRR extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         while(opModeInInit()){
-            //telemetry.addData("pos", getLocation());
+            telemetry.addData("pos", getLocation());
             telemetry.update();
             telemetryTfod();
 
