@@ -69,22 +69,7 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-135))
                 .forward(30)
                 .strafeLeft(6)
-                .lineTo(new Vector2d( 57, -34))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
+                //.lineTo(new Vector2d( 57, -34))
                 .build();
 
         TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
@@ -92,22 +77,7 @@ public class RedCloseRR extends LinearOpMode {
                 .back(2)
                 .lineTo(new Vector2d(37, -35))
                 .turn(Math.toRadians(-90))
-                .lineTo(new Vector2d( 57, -38))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.6);
-                    sleep(1000);
-                })
-                .waitSeconds(1)
-                .back(4)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
+                //.lineTo(new Vector2d( 57, -38))
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
@@ -116,18 +86,7 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-45))
                 .forward(32)
                 .strafeLeft(6)
-                .lineTo(new Vector2d( 57, -46))
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0.68);
-                    sleep(1000);
-                })
-                .back(4)
-                .waitSeconds(1)
-                .back(3)
-                .waitSeconds(1)
-                .addDisplacementMarker( () -> {
-                    lever.setPosition(0);
-                })
+                //.lineTo(new Vector2d( 57, -46))
                 .build();
 
         telemetry.addData("Status", "Initialized");
@@ -151,12 +110,18 @@ public class RedCloseRR extends LinearOpMode {
 
             if(randomization == 0) {
                 drive.followTrajectorySequence(left);
+                telemetry.addData("pos", getLocation());
+                telemetry.update();
             }
             else if(randomization == 1) {
                 drive.followTrajectorySequence(center);
+                telemetry.addData("pos", getLocation());
+                telemetry.update();
             }
             else if(randomization == 2) {
                 drive.followTrajectorySequence(right);
+                telemetry.addData("pos", getLocation());
+                telemetry.update();
             }
             sleep(30000);
         }
@@ -172,7 +137,8 @@ public class RedCloseRR extends LinearOpMode {
         // Create the vision portal the easy way.
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod)
+                .addProcessors(tfod, aprilTag)
+                //.addProcessor()
                 .build();
 
         tfod.setMinResultConfidence(0.68f);
