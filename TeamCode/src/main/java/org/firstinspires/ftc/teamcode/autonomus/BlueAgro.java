@@ -233,4 +233,14 @@ public class BlueAgro extends LinearOpMode {
         return location;
 
     }*/
+    public  void setServoPosition(Servo servo, double position){
+        double curPosition = servo.getPosition();
+        double moveTo = position-curPosition;
+
+        while(curPosition != position){
+            curPosition+= moveTo/10;
+            servo.setPosition(curPosition);
+            sleep(100);
+        }
+    }
 }
