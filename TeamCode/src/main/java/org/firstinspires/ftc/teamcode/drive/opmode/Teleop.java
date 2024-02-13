@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -37,6 +37,8 @@ public class Teleop extends LinearOpMode {
   
     private static final double UP   = 0.3;
     private static final double DOWN = 0;
+
+    private static final double  pr = 1;
   
     private static final int RobotCentric = 0;
     private static final int FeildCentric = 1;
@@ -190,9 +192,19 @@ public class Teleop extends LinearOpMode {
           leftBackDrive.setPower(leftBackPower);
           rightBackDrive.setPower(rightBackPower);
 
-          rightHang.setPower(-hangSpeed);
-          leftHang.setPower(hangSpeed);
-          
+        double dPosition = rightHang.getCurrentPosition()-leftHang.getCurrentPosition();
+
+
+          rightHang.setPower(hangSpeed);
+          leftHang.setPower(hangSpeed+dPosition*pr);
+
+          /*if(rightHang.getCurrentPosition()>leftHang.getCurrentPosition()){
+              rightHang.setPower(0);
+          }else{
+              rightHang.setPower(hangSpeed);
+          }
+*/
+
           //linkDoor.setPosition(linkPosition);
           belt.setPower(runBelt?1:0);
           //flipDoor.setPosition(flipPosition);
@@ -223,4 +235,15 @@ public class Teleop extends LinearOpMode {
 
 
         }
-    }}
+    }
+    void setServoPosition(Servo servo, double position){
+        double curPosition = servo.getPosition();
+        double moveTo = position-curPosition;
+
+        while(curPosition != position){
+            curPosition+= moveTo/10;
+            servo.setPosition(curPosition);
+            sleep(100);
+        }
+    }
+}
