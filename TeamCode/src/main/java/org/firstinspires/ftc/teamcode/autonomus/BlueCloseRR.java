@@ -28,7 +28,7 @@ public class BlueCloseRR extends LinearOpMode {
     TfodProcessor tfod;
     VisionPortal visionPortal;
 
-    int randomization = 0;
+    int randomization = 2;
     AprilTagProcessor  aprilTag;
 
     Servo lever;
@@ -96,7 +96,7 @@ public class BlueCloseRR extends LinearOpMode {
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(19, 37), Math.toRadians(-135))
+                .splineTo(new Vector2d(6, 37), Math.toRadians(225))
                 .back(10)
                 .turn(Math.toRadians(135))
                 .forward(32)
@@ -122,7 +122,7 @@ public class BlueCloseRR extends LinearOpMode {
 
         telemetry.addData("Status", "Initialized");
         while(opModeInInit()){
-            //telemetry.addData("pos", getLocation());
+            telemetry.addData("pos", randomization);
             telemetry.update();
             telemetryTfod();
 
@@ -193,7 +193,6 @@ public class BlueCloseRR extends LinearOpMode {
 
     }
     private int posFind(double x){
-        // int pos = 0;
 
         if(x <= 400){//TODO: make correct
             return 0;
@@ -201,7 +200,6 @@ public class BlueCloseRR extends LinearOpMode {
         else if (x <= 640){
             return 1;
         }
-
         return 2;
     }
 
@@ -252,4 +250,14 @@ public class BlueCloseRR extends LinearOpMode {
         return location;
 
     }*/
+    public  void setServoPosition(Servo servo, double position){
+        double curPosition = servo.getPosition();
+        double moveTo = position-curPosition;
+
+        while(curPosition != position){
+            curPosition+= moveTo/10;
+            servo.setPosition(curPosition);
+            sleep(100);
+        }
+    }
 }
