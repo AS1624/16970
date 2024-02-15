@@ -1,64 +1,111 @@
+/* Copyright (c) 2023 FIRST. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided that
+ * the following conditions are met:
+ *
+ * Redistributions of source code must retain the above copyright notice, this list
+ * of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright notice, this
+ * list of conditions and the following disclaimer in the documentation and/or
+ * other materials provided with the distribution.
+ *
+ * Neither the name of FIRST nor the names of its contributors may be used to endorse or
+ * promote products derived from this software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+ * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.firstinspires.ftc.teamcode.autonomus;
-
-import android.media.MediaRecorder;
-
-import androidx.annotation.NonNull;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
-import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
-import org.firstinspires.ftc.vision.tfod.TfodProcessor;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-
-import org.firstinspires.ftc.teamcode.drive.DriveConstants.camera;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants.AprilTags;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.vision.tfod.TfodProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name="RedCloseRR", group="Robot")
-
+/*
+ * This OpMode illustrates the basics of AprilTag recognition and pose estimation, using
+ * the easy way.
+ *
+ * For an introduction to AprilTags, see the FTC-DOCS link below:
+ * https://ftc-docs.firstinspires.org/en/latest/apriltag/vision_portal/apriltag_intro/apriltag-intro.html
+ *
+ * In this sample, any visible tag ID will be detected and displayed, but only tags that are included in the default
+ * "TagLibrary" will have their position and orientation information displayed.  This default TagLibrary contains
+ * the current Season's AprilTags and a small set of "test Tags" in the high number range.
+ *
+ * When an AprilTag in the TagLibrary is detected, the SDK provides location and orientation of the tag, relative to the camera.
+ * This information is provided in the "ftcPose" member of the returned "detection", and is explained in the ftc-docs page linked below.
+ * https://ftc-docs.firstinspires.org/apriltag-detection-values
+ *
+ * To experiment with using AprilTags to navigate, try out these two driving samples:
+ * RobotAutoDriveToAprilTagOmni and RobotAutoDriveToAprilTagTank
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
+ */
+@Autonomous(name = "Red Close", group = "A")
+//@Disabled
 public class RedCloseRR extends LinearOpMode {
 
-    private static final boolean USE_WEBCAM = true;
+    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
     private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedPropp.tflite";
     private static final String[] LABELS = {
             "Pixel",
     };
-    TfodProcessor tfod;
-    VisionPortal visionPortal;
+    /**
+     * The variable to store our instance of the AprilTag processor.
+     */
+    private AprilTagProcessor aprilTag;
+
+    private TfodProcessor tfod;
+
+    /**
+     * The variable to store our instance of the vision portal.
+     */
+    private VisionPortal visionPortal;
+
+
 
     int randomization = 2;
-    AprilTagProcessor  aprilTag;
 
     Servo lever;
 
     @Override
     public void runOpMode() {
 
-        // Wait for the game to start (driver presses PLAY)
-        initVision();
-        telemetryTfod();
-
+        initAprilTag();
         lever = hardwareMap.get(Servo.class, "lever");
-        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
+
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
@@ -69,6 +116,7 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-135))
                 .forward(30)
                 .strafeLeft(6)
+                //.lineTo(new Vector2d( 57, -34))
                 .build();
 
         TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
@@ -76,6 +124,7 @@ public class RedCloseRR extends LinearOpMode {
                 .back(2)
                 .lineTo(new Vector2d(37, -35))
                 .turn(Math.toRadians(-90))
+                //.lineTo(new Vector2d( 57, -38))
                 .build();
 
         TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
@@ -84,56 +133,73 @@ public class RedCloseRR extends LinearOpMode {
                 .turn(Math.toRadians(-45))
                 .forward(32)
                 .strafeLeft(6)
+                //.lineTo(new Vector2d( 57, -46))
                 .build();
 
-        telemetry.addData("Status", "Initialized");
+        //telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
+        //telemetry.addData(">", "Touch Play to start OpMode");
+        telemetry.update();
+
         while(opModeInInit()){
-            telemetry.addData("pos", getLocation());
-            telemetry.update();
+            //telemetry.addData("pos", getLocation());
+            //telemetry.update();
             telemetryTfod();
 
         }
 
-
         waitForStart();
-        //runtime.reset();
 
-        boolean triggerDown = false;
-        //double doorPosition = DOWN;
+        if (opModeIsActive()) {
+            while (opModeIsActive()) {
 
+                switch (randomization) {
+                    case 0:
+                        drive.followTrajectorySequence(left);
+                        break;
+                    case 1:
+                        drive.followTrajectorySequence(center);
+                        break;
+                    case 2:
+                        drive.followTrajectorySequence(right);
+                        break;
+                    default:
+                        break;
+                }
 
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
-
-            if(randomization == 0) {
-                drive.followTrajectorySequence(left);
+                Pose2d location = getLocation();
+                drive.setPoseEstimate(location);
+                drive.followTrajectory(drive.trajectoryBuilder(location)
+                        .lineToLinearHeading(getDropoff(false,randomization,false))
+                        .build()
+                );
+                lever.setPosition(0.7);
+                slowServo(lever, 0.3);
+                sleep(30000);
+                //telemetry.addData("location", getLocation());
+                //telemetry.update();
             }
-            else if(randomization == 1) {
-                drive.followTrajectorySequence(center);
-            }
-            else if(randomization == 2) {
-                drive.followTrajectorySequence(right);
-            }
-            sleep(30000);
         }
 
-        //visionPortal.close();
-    }
+        // Save more CPU resources when camera is no longer needed.
+        visionPortal.close();
 
+    }   // end method runOpMode()
 
-    private void initVision() {
-        // Create the TensorFlow processor by using a builder.
+    /**
+     * Initialize the AprilTag processor.
+     */
+    private void initAprilTag() {
+
+        // Create the AprilTag processor the easy way.
+        aprilTag = AprilTagProcessor.easyCreateWithDefaults();
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
         // Create the vision portal the easy way.
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .addProcessors(tfod)
-                .build();
 
-        tfod.setMinResultConfidence(0.68f);
+        visionPortal = VisionPortal.easyCreateWithDefaults(
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
 
-    }
+    }   // end method initAprilTag()
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
@@ -170,62 +236,74 @@ public class RedCloseRR extends LinearOpMode {
 
         return 2;
     }
-
-
     private Pose2d getLocation() {
+        Pose2d location = new Pose2d(0,0,0);
+        // run at 30 fps, or 33.3hz
+        // this should be the max allowed by the decimation
+        for(int i = 0; i < 33; i ++){
+            List<AprilTagDetection> currentTagDetections = aprilTag.getDetections();
+            telemetry.addData("AprilTags", currentTagDetections.size());
 
+            //ArrayList<Pose2d> locations = new ArrayList<>();
 
-        List<AprilTagDetection> currentTagDetections = aprilTag.getDetections();
-        telemetry.addData("AprilTags", currentTagDetections.size());
+            // Step through the list of detections and display info for each one.
+            if (currentTagDetections.size() > 0) {
+                AprilTagDetection detection = currentTagDetections.get(0);
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
 
-        ArrayList<Pose2d> locations = new ArrayList<>();
-        Pose2d location = new Pose2d();
+                    Pose2d tag = DriveConstants.AprilTags.tags[detection.id];
 
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentTagDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                    location = new Pose2d(
+                            tag.getX() - detection.ftcPose.y-DriveConstants.camera.x,
+                            tag.getY() + detection.ftcPose.x-DriveConstants.camera.y,
+                            Math.toRadians(tag.getHeading() - detection.ftcPose.yaw - DriveConstants.camera.yaw));
 
-                Pose2d tag = AprilTags.tags[detection.id];
-                locations.add( new Pose2d(tag.getX() - detection.ftcPose.x + camera.x,
-                                          tag.getY() - detection.ftcPose.y + camera.y,
-                                     tag.getHeading() - detection.ftcPose.yaw + camera.yaw) );
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                    //telemetry.addData("error", detection.ftcPose.yaw * 3.14159 / 180 - location.getHeading());
+                    return location;
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
+                }
             }
-        }   // end for() loop
 
-        for(int i = 0; i < locations.size(); i ++){
-            location = new Pose2d(location.getX() + locations.get(i).getX(),
-                                  location.getY() + locations.get(i).getY(),
-                                  location.getHeading() + locations.get(i).getHeading());
+
+            // Add "key" information to telemetry
+            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+            telemetry.addLine("RBE = Range, Bearing & Elevation");
+
+            sleep(1000 / 30);
+
         }
 
-        location = new Pose2d(location.getX() / locations.size(),
-                              location.getY() / locations.size(),
-                              location.getHeading() / locations.size());
-
-        // Add "key" information to telemetry
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-        //Pose2d location = new Pose2d(0,0,0);
         return location;
 
     }
-    public  void setServoPosition(Servo servo, double position){
-        double curPosition = servo.getPosition();
-        double moveTo = position-curPosition;
+    private  Pose2d getDropoff(boolean blue, int randomization, boolean left){
+        double y;
+        if(blue){
+            y =   72 - ( 31 + 6 * randomization + (left?0:3) );
+        }
+        else {
+            y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
+        }
 
-        while(curPosition != position){
-            curPosition+= moveTo/10;
-            servo.setPosition(curPosition);
-            sleep(100);
+        return new Pose2d(48.5, y, 0);
+    }
+    private void slowServo(Servo servo, double end){
+        int count = 50;
+        double speed = 0.1; //units are servo range degrees / second
+        double start = servo.getPosition();
+
+        for(double i = 0; i < 1; i += 1 / count){
+            servo.setPosition(start + (end - start) *  i);
+            sleep((long) ((speed / count ) / Math.abs(start - end) * 1000));
         }
     }
-}
+
+
+}   // end class

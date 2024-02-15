@@ -276,15 +276,16 @@ public class tags extends LinearOpMode {
         return location;
 
     }
-    public static Pose2d getDropoff(boolean blue, int randomization, boolean left){
+    public static Vector2d getDropoff(boolean blue, int randomization, boolean left){
+        double y;
         if(blue){
-            double y =   72 - ( 31 + 6 * randomization + (left?0:3) );
+            y =   72 - ( 31 + 6 * randomization + (left?0:3) );
         }
         else {
-            double y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
+            y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
         }
 
-        return new Pose2d(48.5, y, Math.toRadians(blue?-90:90));
+        return new Vector2d(48.5, y);
     }
 
 }   // end class
