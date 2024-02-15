@@ -146,24 +146,30 @@ public class tags extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-//                if(randomization == 0) {
-//                    drive.followTrajectorySequence(left);
-//                    telemetry.addData("pos", getLocation());
-//                    telemetry.update();
-//                }
-//                else if(randomization == 1) {
-//                    drive.followTrajectorySequence(center);
-//                    telemetry.addData("pos", getLocation());
-//                    telemetry.update();
-//                }
-//                else if(randomization == 2) {
-//                    drive.followTrajectorySequence(right);
-//                    telemetry.addData("pos", getLocation());
-//                    telemetry.update();
-//                }
-//                sleep(30000);
-                telemetry.addData("location", getLocation());
-                telemetry.update();
+                switch (randomization) {
+                    case 0:
+                        drive.followTrajectorySequence(left);
+                        break;
+                    case 1:
+                        drive.followTrajectorySequence(center);
+                        break;
+                    case 2:
+                        drive.followTrajectorySequence(right);
+                        break;
+                    default:
+                        break;
+                }
+
+                Pose2d location = getLocation();
+                drive.setPoseEstimate(location);
+                drive.followTrajectory(drive.trajectoryBuilder(location)
+                        .lineTo(getDropoff(false,randomization,false))
+                        .build()
+                );
+
+                sleep(30000);
+                //telemetry.addData("location", getLocation());
+                //telemetry.update();
             }
         }
 
@@ -187,35 +193,6 @@ public class tags extends LinearOpMode {
                     hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
 
     }   // end method initAprilTag()
-
-    /**
-     * Add telemetry about AprilTag detections.
-     */
-    private void telemetryAprilTag() {
-
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-        telemetry.addData("# AprilTags Detected", currentDetections.size());
-
-        // Step through the list of detections and display info for each one.
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
-                telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
-                telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
-                telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
-            } else {
-                telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
-                telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
-            }
-        }   // end for() loop
-
-        // Add "key" information to telemetry
-        telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-        telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-        telemetry.addLine("RBE = Range, Bearing & Elevation");
-
-    }   // end method telemetryAprilTag()
-
     private void telemetryTfod() {
 
         List<Recognition> currentRecognitions = tfod.getRecognitions();
@@ -252,12 +229,11 @@ public class tags extends LinearOpMode {
 
         return 2;
     }
-
-
     private Pose2d getLocation() {
         Pose2d location = new Pose2d(0,0,0);
-
-        for(int i = 0; i < 10; i ++){
+        // run at 30 fps, or 33.3hz
+        // this should be the max allowed by the decimation
+        for(int i = 0; i < 33; i ++){
             List<AprilTagDetection> currentTagDetections = aprilTag.getDetections();
             telemetry.addData("AprilTags", currentTagDetections.size());
 
@@ -279,7 +255,7 @@ public class tags extends LinearOpMode {
                             tag.getY() + detection.ftcPose.x-DriveConstants.camera.y,
                             Math.toRadians(tag.getHeading() - detection.ftcPose.yaw - DriveConstants.camera.yaw));
 
-                    telemetry.addData("error", detection.ftcPose.yaw * 3.14159 / 180 - location.getHeading());
+                    //telemetry.addData("error", detection.ftcPose.yaw * 3.14159 / 180 - location.getHeading());
                     return location;
                 } else {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
@@ -293,12 +269,22 @@ public class tags extends LinearOpMode {
             telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
             telemetry.addLine("RBE = Range, Bearing & Elevation");
 
-            sleep(1000);
+            sleep(1000 / 30);
 
         }
 
         return location;
 
+    }
+    public static Pose2d getDropoff(boolean blue, int randomization, boolean left){
+        if(blue){
+            double y =   72 - ( 31 + 6 * randomization + (left?0:3) );
+        }
+        else {
+            double y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
+        }
+
+        return new Pose2d(48.5, y, Math.toRadians(blue?-90:90));
     }
 
 }   // end class
