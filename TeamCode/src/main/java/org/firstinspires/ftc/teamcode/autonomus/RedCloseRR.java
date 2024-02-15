@@ -167,13 +167,27 @@ public class RedCloseRR extends LinearOpMode {
                 }
 
                 Pose2d location = getLocation();
-                drive.setPoseEstimate(location);
-                drive.followTrajectory(drive.trajectoryBuilder(location)
+                if(!location.equals(new Pose2d(0,0,0))) {
+                    drive.setPoseEstimate(location);
+                    telemetry.addLine("found");
+                }
+                else{
+                    telemetry.addLine("not found");
+                }
+
+                telemetry.update();
+                drive.followTrajectorySequence(drive.trajectorySequenceBuilder(location)
                         .lineToLinearHeading(getDropoff(false,randomization,false))
+                        .addDisplacementMarker(() -> {
+                            lever.setPosition(1);
+                            slowServo(lever, 0.5);
+                        })
+                        .back(12)
+                        .strafeRight(24)
+                        .forward(20)
                         .build()
                 );
-                lever.setPosition(0.7);
-                slowServo(lever, 0.3);
+
                 sleep(30000);
                 //telemetry.addData("location", getLocation());
                 //telemetry.update();
@@ -197,7 +211,7 @@ public class RedCloseRR extends LinearOpMode {
         // Create the vision portal the easy way.
 
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag, tfod);
 
     }   // end method initAprilTag()
     private void telemetryTfod() {
@@ -292,16 +306,19 @@ public class RedCloseRR extends LinearOpMode {
             y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
         }
 
-        return new Pose2d(48.5, y, 0);
+        return new Pose2d(53, y, 0);
     }
     private void slowServo(Servo servo, double end){
-        int count = 50;
-        double speed = 0.1; //units are servo range degrees / second
+        int count = 100;
+        double seconds = 5;
         double start = servo.getPosition();
 
-        for(double i = 0; i < 1; i += 1 / count){
+        for(double i = 0; i <= 1; i += 1.0 / count){
             servo.setPosition(start + (end - start) *  i);
-            sleep((long) ((speed / count ) / Math.abs(start - end) * 1000));
+            sleep((long) seconds * 1000 / count);
+
+            telemetry.addData("", i);
+            telemetry.update();
         }
     }
 

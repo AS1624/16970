@@ -78,7 +78,7 @@ import java.util.List;
 public class BlueCloseRR extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/RedPropp.tflite";
+    private static final String TFOD_MODEL_FILE = "/sdcard/FIRST/tflitemodels/BluePropp.tflite";
     private static final String[] LABELS = {
             "Pixel",
     };
