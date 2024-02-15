@@ -146,22 +146,24 @@ public class tags extends LinearOpMode {
         if (opModeIsActive()) {
             while (opModeIsActive()) {
 
-                if(randomization == 0) {
-                    drive.followTrajectorySequence(left);
-                    telemetry.addData("pos", getLocation());
-                    telemetry.update();
-                }
-                else if(randomization == 1) {
-                    drive.followTrajectorySequence(center);
-                    telemetry.addData("pos", getLocation());
-                    telemetry.update();
-                }
-                else if(randomization == 2) {
-                    drive.followTrajectorySequence(right);
-                    telemetry.addData("pos", getLocation());
-                    telemetry.update();
-                }
-                sleep(30000);
+//                if(randomization == 0) {
+//                    drive.followTrajectorySequence(left);
+//                    telemetry.addData("pos", getLocation());
+//                    telemetry.update();
+//                }
+//                else if(randomization == 1) {
+//                    drive.followTrajectorySequence(center);
+//                    telemetry.addData("pos", getLocation());
+//                    telemetry.update();
+//                }
+//                else if(randomization == 2) {
+//                    drive.followTrajectorySequence(right);
+//                    telemetry.addData("pos", getLocation());
+//                    telemetry.update();
+//                }
+//                sleep(30000);
+                telemetry.addData("location", getLocation());
+                telemetry.update();
             }
         }
 
@@ -273,11 +275,12 @@ public class tags extends LinearOpMode {
                     Pose2d tag = DriveConstants.AprilTags.tags[detection.id];
 
                     location = new Pose2d(
-                            tag.getX() - detection.ftcPose.x - DriveConstants.camera.x,
-                            tag.getY() - detection.ftcPose.y - DriveConstants.camera.y,
+                            tag.getX() - detection.ftcPose.y-DriveConstants.camera.x,
+                            tag.getY() + detection.ftcPose.x-DriveConstants.camera.y,
                             Math.toRadians(tag.getHeading() - detection.ftcPose.yaw - DriveConstants.camera.yaw));
 
                     telemetry.addData("error", detection.ftcPose.yaw * 3.14159 / 180 - location.getHeading());
+                    return location;
                 } else {
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));

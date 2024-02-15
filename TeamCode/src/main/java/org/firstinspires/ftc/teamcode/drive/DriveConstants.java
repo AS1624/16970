@@ -115,18 +115,18 @@ public class DriveConstants {
   public  static class AprilTags {
       public static Pose2d[] tags = {
               new Pose2d(),
-              new Pose2d(+42, 62.5, 0),
-              new Pose2d(+36, 62.5, 0),
-              new Pose2d(+30, 62.5, 0),
-              new Pose2d(-30, 62.5, 0),
-              new Pose2d(-36, 62.5, 0),
-              new Pose2d(-32, 62.5, 0)};
+              new Pose2d(60, +41.5, 0),
+              new Pose2d(60, +35.5, 0),
+              new Pose2d(60, +29, 0),
+              new Pose2d(60, -29, 0),
+              new Pose2d(60, -35.5, 0),
+              new Pose2d(60, -41.5, 0)};
     public AprilTags(){}
   }
 
   public  static class camera {
     public static double x = 12.75 / 2;
-    public static double y = 4 + 1.0 / 8;
+    public static double y = -4 + 1.0 / 8;
     public static double z = 7 + 3.0 / 4;
     //TODO: add camera position relative to robot
     public static double pich = 0;
