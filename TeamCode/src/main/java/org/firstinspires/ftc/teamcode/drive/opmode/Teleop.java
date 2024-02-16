@@ -38,7 +38,7 @@ public class Teleop extends LinearOpMode {
     private static final double UP   = 0.3;
     private static final double DOWN = 0;
 
-    private static final double  pr = 1;
+    private static final double  pr = 0.1;
   
     private static final int RobotCentric = 0;
     private static final int FeildCentric = 1;
@@ -82,7 +82,11 @@ public class Teleop extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        
+
+        leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();

@@ -96,7 +96,9 @@ public class RedCloseRR extends LinearOpMode {
 
 
 
-    int randomization = 2;
+    int randomization = 0;
+
+    static int rand = 0;
 
     Servo lever;
 
@@ -111,30 +113,32 @@ public class RedCloseRR extends LinearOpMode {
         Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
         drive.setPoseEstimate(startPosition);
         TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(6, -38), Math.toRadians(135))
-                .back(12)
-                .turn(Math.toRadians(-135))
-                .forward(30)
-                .strafeLeft(6)
-                //.lineTo(new Vector2d( 57, -34))
-                .build();
-
-        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
-                .forward(32)
-                .back(2)
-                .lineTo(new Vector2d(37, -35))
-                .turn(Math.toRadians(-90))
-                //.lineTo(new Vector2d( 57, -38))
-                .build();
-
-        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
                 .splineTo(new Vector2d(19, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(-45))
                 .forward(32)
-                .strafeLeft(6)
+                .strafeLeft(8)
                 //.lineTo(new Vector2d( 57, -46))
                 .build();
+
+        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .forward(30)
+                .back(2)
+                .lineTo(new Vector2d(37, -35))
+                .turn(Math.toRadians(-90))
+                //.lineTo(new Vector2d( 57, -38))
+                .forward(6)
+                .build();
+
+        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(6, -38), Math.toRadians(135))
+                .back(12)
+                .turn(Math.toRadians(-135))
+                .forward(30)
+                .strafeLeft(8)
+                //.lineTo(new Vector2d( 57, -34))
+                .build();
+
 
         //telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         //telemetry.addData(">", "Touch Play to start OpMode");
@@ -154,28 +158,28 @@ public class RedCloseRR extends LinearOpMode {
 
                 switch (randomization) {
                     case 0:
-                        drive.followTrajectorySequence(left);
+                        drive.followTrajectorySequence(right);
                         break;
                     case 1:
                         drive.followTrajectorySequence(center);
                         break;
                     case 2:
-                        drive.followTrajectorySequence(right);
-                        break;
-                    default:
+                        drive.followTrajectorySequence(left);
                         break;
                 }
 
                 Pose2d location = getLocation();
                 if(!location.equals(new Pose2d(0,0,0))) {
                     drive.setPoseEstimate(location);
+
                     telemetry.addLine("found");
                 }
                 else{
                     telemetry.addLine("not found");
                 }
-
+                telemetry.addData("getLocation",location);
                 telemetry.update();
+/*
                 drive.followTrajectorySequence(drive.trajectorySequenceBuilder(location)
                         .lineToLinearHeading(getDropoff(false,randomization,false))
                         .addDisplacementMarker(() -> {
@@ -186,8 +190,7 @@ public class RedCloseRR extends LinearOpMode {
                         .strafeRight(24)
                         .forward(20)
                         .build()
-                );
-
+                );*/
                 sleep(30000);
                 //telemetry.addData("location", getLocation());
                 //telemetry.update();
@@ -195,6 +198,8 @@ public class RedCloseRR extends LinearOpMode {
         }
 
         // Save more CPU resources when camera is no longer needed.
+
+
         visionPortal.close();
 
     }   // end method runOpMode()
@@ -212,6 +217,8 @@ public class RedCloseRR extends LinearOpMode {
 
         visionPortal = VisionPortal.easyCreateWithDefaults(
                 hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag, tfod);
+
+
 
     }   // end method initAprilTag()
     private void telemetryTfod() {
@@ -241,14 +248,14 @@ public class RedCloseRR extends LinearOpMode {
     private int posFind(double x){
         // int pos = 0;
 
-        if(x <= 120){//TODO: make correct
-            return 0;
-        }
-        else if (x <= 640){
+        if(x <= 230){//TODO: make correct
             return 1;
         }
+        else if (x <= 640){
+            return 2;
+        }
 
-        return 2;
+        return 0;
     }
     private Pose2d getLocation() {
         Pose2d location = new Pose2d(0,0,0);
@@ -286,9 +293,9 @@ public class RedCloseRR extends LinearOpMode {
 
 
             // Add "key" information to telemetry
-            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-            telemetry.addLine("RBE = Range, Bearing & Elevation");
+            //telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            //telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+            //telemetry.addLine("RBE = Range, Bearing & Elevation");
 
             sleep(1000 / 30);
 
@@ -297,16 +304,20 @@ public class RedCloseRR extends LinearOpMode {
         return location;
 
     }
-    private  Pose2d getDropoff(boolean blue, int randomization, boolean left){
+    private  Pose2d getDropoff(boolean isBlue, int randomization, boolean isLeft){
         double y;
-        if(blue){
-            y =   72 - ( 31 + 6 * randomization + (left?0:3) );
+        if(isBlue){
+            y =   72 - ( 31 + 6 * randomization + (isLeft?0:3) );
         }
         else {
-            y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
+            y = -72 + (24.5 + 6 * (2- randomization) + (isLeft ? 3 : 0));
         }
-
-        return new Pose2d(53, y, 0);
+        telemetry.addData("y", y);
+        telemetry.addData("r", randomization);
+        telemetry.addData("B", isBlue);
+        telemetry.addData("L", isLeft);
+        telemetry.update();
+        return new Pose2d(55, y, 0);
     }
     private void slowServo(Servo servo, double end){
         int count = 100;
