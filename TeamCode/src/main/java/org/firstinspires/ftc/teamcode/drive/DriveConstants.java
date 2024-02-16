@@ -115,9 +115,9 @@ public class DriveConstants {
   public  static class AprilTags {
       public static Pose2d[] tags = {
               new Pose2d(),
-              new Pose2d(60, +41.5, 0),
-              new Pose2d(60, +35.5, 0),
-              new Pose2d(60, +29, 0),
+              new Pose2d(60, -41.5, 0),
+              new Pose2d(60, -35.5, 0),
+              new Pose2d(60, -29, 0),
               new Pose2d(60, -29, 0),
               new Pose2d(60, -35.5, 0),
               new Pose2d(60, -41.5, 0)};

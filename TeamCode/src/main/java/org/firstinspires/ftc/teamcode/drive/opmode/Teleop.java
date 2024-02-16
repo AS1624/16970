@@ -67,7 +67,7 @@ public class Teleop extends LinearOpMode {
         flipDoor   = hardwareMap.get(Servo.class, "flip");
         linkDoor  = hardwareMap.get(Servo.class, "link");
         belt       = hardwareMap.get(CRServo.class, "belt");
-        //launcher   = hardwareMap.get(Servo.class, "servo1");
+        launcher   = hardwareMap.get(Servo.class, "launcher");
         lever      = hardwareMap.get(Servo.class, "lever");
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -106,40 +106,18 @@ public class Teleop extends LinearOpMode {
           
           boolean flipSet         = gamepad1.right_bumper;
           boolean linkSet         = gamepad1.left_bumper;
-          boolean launcherTrigger = gamepad1.y;
+          boolean launcherTrigger = gamepad2.options;
           boolean runBelt         = gamepad2.a;
 
 
-          boolean linkUp          = gamepad1.right_bumper;
-          boolean linkDown        = gamepad1.right_trigger > 0.7;
+          boolean linkUp          = gamepad1.left_bumper;
+          boolean linkDown        = gamepad1.left_trigger > 0.7;
 
-          boolean flipUp          = gamepad1.left_bumper;
-          boolean flipDown        = gamepad1.left_trigger > 0.7;
+          boolean flipUp          = gamepad1.right_bumper;
+          boolean flipDown        = gamepad1.right_trigger > 0.7;
 
           double leftHangSpeed = gamepad2.left_trigger + (gamepad2.left_bumper?-2:0);
           double rightHangSpeed = gamepad2.right_trigger + (gamepad2.right_bumper?-2:0);
-
-          //one driver
-          /*[
-            if(linkSet && !linkTrigger){
-                //trigger1Down  = true;
-                linkPosition = (linkPosition == UP?DOWN:UP);
-            }
-            linkTrigger = linkSet;
-            
-            if(flipSet && !flipTrigger){
-                //trigger1Down  = true;
-                flipPosition = (flipPosition == UP?DOWN:UP);
-            }
-            flipTrigger = flipSet;
-            
-            if(launch != launcherTrigger){
-                launch = ! launch;
-                launcherTrigger = ! launcherTrigger;
-            }
-]*/
-
-            //two driver
 
           
           if (gamepad1.options) {
@@ -169,8 +147,8 @@ public class Teleop extends LinearOpMode {
             }
           }
           else{
-            double x = gamepad1.left_stick_x;
-            double y = - gamepad1.left_stick_y;
+            double x = - gamepad1.left_stick_x;
+            double y = gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
               
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -201,18 +179,16 @@ public class Teleop extends LinearOpMode {
           rightHang.setPower(leftHangSpeed);
           leftHang.setPower(rightHangSpeed);
 
-          /*if(rightHang.getCurrentPosition()>leftHang.getCurrentPosition()){
-              rightHang.setPower(0);
-          }else{
-              rightHang.setPower(hangSpeed);
+          if(launcherTrigger) {
+              launcher.setPosition(0.8);
           }
-*/
+          else{
+              launcher.setPosition(0);
+          }
 
-          //linkDoor.setPosition(linkPosition);
+
           belt.setPower(runBelt?1:0);
-          //flipDoor.setPosition(flipPosition);
-          //launcher.setPosition(launch?0:0.5);
-          lever.setPosition(0.2); // 0.1 = 10 degrees ish
+          lever.setPosition(0.4); // 0.1 = 10 degrees ish
 
             if(linkUp){
                 linkDoor.setPosition(UP);

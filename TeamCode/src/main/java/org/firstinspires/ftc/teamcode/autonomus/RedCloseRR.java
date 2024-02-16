@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -100,6 +101,8 @@ public class RedCloseRR extends LinearOpMode {
 
     static int rand = 0;
 
+    DcMotor leftHang;
+    DcMotor rightHang;
     Servo lever;
 
     @Override
@@ -108,12 +111,19 @@ public class RedCloseRR extends LinearOpMode {
         initAprilTag();
         lever = hardwareMap.get(Servo.class, "lever");
 
+        rightHang  = hardwareMap.get(DcMotor.class, "rightHang");
+        leftHang  = hardwareMap.get(DcMotor.class, "leftHang");
+
+        leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
         drive.setPoseEstimate(startPosition);
         TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
-                .splineTo(new Vector2d(19, -36), Math.toRadians(45))
+                .splineTo(new Vector2d(20, -36), Math.toRadians(45))
                 .back(10)
                 .turn(Math.toRadians(-45))
                 .forward(32)
@@ -175,22 +185,26 @@ public class RedCloseRR extends LinearOpMode {
                     telemetry.addLine("found");
                 }
                 else{
+                    location = drive.getPoseEstimate();
                     telemetry.addLine("not found");
                 }
                 telemetry.addData("getLocation",location);
                 telemetry.update();
-/*
-                drive.followTrajectorySequence(drive.trajectorySequenceBuilder(location)
+
+                drive.followTrajectory(drive.trajectoryBuilder(location)
                         .lineToLinearHeading(getDropoff(false,randomization,false))
-                        .addDisplacementMarker(() -> {
-                            lever.setPosition(1);
-                            slowServo(lever, 0.5);
-                        })
+                        .build()
+                );
+
+                lever.setPosition(1);
+                slowServo(lever, 0.5);
+                drive.followTrajectorySequence(drive.trajectorySequenceBuilder(getDropoff(false,randomization,false))
                         .back(12)
                         .strafeRight(24)
                         .forward(20)
                         .build()
-                );*/
+                );
+
                 sleep(30000);
                 //telemetry.addData("location", getLocation());
                 //telemetry.update();
@@ -213,6 +227,7 @@ public class RedCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
+        tfod.setMinResultConfidence(0.5f);
         // Create the vision portal the easy way.
 
         visionPortal = VisionPortal.easyCreateWithDefaults(
@@ -317,7 +332,7 @@ public class RedCloseRR extends LinearOpMode {
         telemetry.addData("B", isBlue);
         telemetry.addData("L", isLeft);
         telemetry.update();
-        return new Pose2d(55, y, 0);
+        return new Pose2d(54, y, 0);
     }
     private void slowServo(Servo servo, double end){
         int count = 100;

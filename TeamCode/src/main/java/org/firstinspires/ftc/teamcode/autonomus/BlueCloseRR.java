@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -94,11 +95,15 @@ public class BlueCloseRR extends LinearOpMode {
      */
     private VisionPortal visionPortal;
 
-    int randomization = 2;
 
+
+    int randomization = 0;
+
+    static int rand = 0;
+
+    DcMotor leftHang;
+    DcMotor rightHang;
     Servo lever;
-
-
 
     @Override
     public void runOpMode() {
@@ -106,32 +111,44 @@ public class BlueCloseRR extends LinearOpMode {
         initAprilTag();
         lever = hardwareMap.get(Servo.class, "lever");
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-        Pose2d startPosition = new Pose2d(13, 63, Math.toRadians(270) );
-        drive.setPoseEstimate(startPosition);
+        rightHang  = hardwareMap.get(DcMotor.class, "rightHang");
+        leftHang  = hardwareMap.get(DcMotor.class, "leftHang");
 
-        TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(20, 37), Math.toRadians(-45))
+        leftHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightHang.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPosition = new Pose2d(13, -63, Math.toRadians(90) );
+        drive.setPoseEstimate(startPosition);
+        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(20, -36), Math.toRadians(45))
+                .back(10)
+                .turn(Math.toRadians(135))
+                .forward(32)
+                .strafeRight(8)
+                //.lineTo(new Vector2d( 57, -46))
+                .build();
+
+        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .forward(30)
+                .back(2)
+                .strafeLeft(30)
+                .turn(Math.toRadians(90))
+                //.lineTo(new Vector2d( 57, -38))
+                //.forward(6)
+                .build();
+
+        TrajectorySequence left =     drive.trajectorySequenceBuilder(new Pose2d(13, -63, Math.toRadians(90) ) )
+                .splineTo(new Vector2d(6, -38), Math.toRadians(135))
                 .back(12)
                 .turn(Math.toRadians(45))
                 .forward(30)
-                .strafeRight(6)
+                .strafeRight(8)
+                //.lineTo(new Vector2d( 57, -34))
                 .build();
 
-        TrajectorySequence center =    drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .forward(32)
-                .back(2)
-                .lineTo(new Vector2d(37, 35))
-                .turn(Math.toRadians(90))
-                .build();
-
-        TrajectorySequence right =     drive.trajectorySequenceBuilder(new Pose2d(13, 63, Math.toRadians(270) ) )
-                .splineTo(new Vector2d(7, 37), Math.toRadians(-135))
-                .back(12)
-                .turn(Math.toRadians(135))
-                .forward(33)
-                .strafeLeft(6)
-                .build();
 
         //telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         //telemetry.addData(">", "Touch Play to start OpMode");
@@ -159,18 +176,35 @@ public class BlueCloseRR extends LinearOpMode {
                     case 2:
                         drive.followTrajectorySequence(right);
                         break;
-                    default:
-                        break;
                 }
 
                 Pose2d location = getLocation();
-                drive.setPoseEstimate(location);
+                /*if(!location.equals(new Pose2d(0,0,0))) {
+                    drive.setPoseEstimate(location);
+
+                    telemetry.addLine("found");
+                }
+                else{*/
+                    location = drive.getPoseEstimate();
+                    telemetry.addLine("not found");
+                //}
+                telemetry.addData("getLocation",location);
+                telemetry.update();
+
                 drive.followTrajectory(drive.trajectoryBuilder(location)
-                        .lineToLinearHeading(getDropoff(true, randomization,false))
+                        .lineToLinearHeading(getDropoff(true,randomization,false))
                         .build()
                 );
-                lever.setPosition(0.7);
-                slowServo(lever, 0.3);
+
+                lever.setPosition(1);
+                slowServo(lever, 0.5);
+                drive.followTrajectorySequence(drive.trajectorySequenceBuilder(getDropoff(true,randomization,false))
+                        .back(12)
+                        .strafeLeft(24)
+                        .forward(20)
+                        .build()
+                );
+
                 sleep(30000);
                 //telemetry.addData("location", getLocation());
                 //telemetry.update();
@@ -178,6 +212,8 @@ public class BlueCloseRR extends LinearOpMode {
         }
 
         // Save more CPU resources when camera is no longer needed.
+
+
         visionPortal.close();
 
     }   // end method runOpMode()
@@ -191,10 +227,13 @@ public class BlueCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
+        tfod.setMinResultConfidence(0.5f);
         // Create the vision portal the easy way.
 
         visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag);
+                hardwareMap.get(WebcamName.class, "Webcam 1"), aprilTag, tfod);
+
+
 
     }   // end method initAprilTag()
     private void telemetryTfod() {
@@ -224,11 +263,11 @@ public class BlueCloseRR extends LinearOpMode {
     private int posFind(double x){
         // int pos = 0;
 
-        if(x >= 400){//TODO: make correct
-            return 2;
-        }
-        else if (x >= 0){
+        if(x <= 230){//TODO: make correct
             return 1;
+        }
+        else if (x <= 640){
+            return 2;
         }
 
         return 0;
@@ -269,9 +308,9 @@ public class BlueCloseRR extends LinearOpMode {
 
 
             // Add "key" information to telemetry
-            telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
-            telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
-            telemetry.addLine("RBE = Range, Bearing & Elevation");
+            //telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
+            //telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
+            //telemetry.addLine("RBE = Range, Bearing & Elevation");
 
             sleep(1000 / 30);
 
@@ -280,26 +319,34 @@ public class BlueCloseRR extends LinearOpMode {
         return location;
 
     }
-    public static Pose2d getDropoff(boolean blue, int randomization, boolean left){
+    private  Pose2d getDropoff(boolean isBlue, int randomization, boolean isLeft){
         double y;
-        if(blue){
-            y =   72 - ( 31 + 6 * randomization + (left?0:3) );
+        if(isBlue){
+            y =   -72 + ( 39 + 6 * randomization + (isLeft?0:3) );
         }
         else {
-            y = -72 + (24.5 + 6 * (2 - randomization) + (left ? 3 : 0));
+            y = -72 + (24.5 + 6 * (2- randomization) + (isLeft ? 3 : 0));
         }
-
-        return new Pose2d(48.5, y, 0);
+        telemetry.addData("y", y);
+        telemetry.addData("r", randomization);
+        telemetry.addData("B", isBlue);
+        telemetry.addData("L", isLeft);
+        telemetry.update();
+        return new Pose2d(54, y, 0);
     }
-
     private void slowServo(Servo servo, double end){
-        int count = 50;
-        double speed = 0.1; //units are servo range degrees / second
+        int count = 100;
+        double seconds = 5;
         double start = servo.getPosition();
 
-        for(double i = 0; i < 1; i += 1 / count){
+        for(double i = 0; i <= 1; i += 1.0 / count){
             servo.setPosition(start + (end - start) *  i);
-            sleep((long) ((speed / count ) / Math.abs(start - end) * 1000));
+            sleep((long) seconds * 1000 / count);
+
+            telemetry.addData("", i);
+            telemetry.update();
         }
     }
+
+
 }   // end class
