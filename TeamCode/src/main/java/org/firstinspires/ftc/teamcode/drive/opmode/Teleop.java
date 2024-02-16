@@ -116,7 +116,8 @@ public class Teleop extends LinearOpMode {
           boolean flipUp          = gamepad1.left_bumper;
           boolean flipDown        = gamepad1.left_trigger > 0.7;
 
-          double hangSpeed = (gamepad2.dpad_up ? 1.0 : 0.0) + (gamepad2.dpad_down ? -1.0 : 0.0);
+          double leftHangSpeed = gamepad2.left_trigger + (gamepad2.left_bumper?-2:0);
+          double rightHangSpeed = gamepad2.right_trigger + (gamepad2.right_bumper?-2:0);
 
           //one driver
           /*[
@@ -147,7 +148,7 @@ public class Teleop extends LinearOpMode {
 
           if(DriveMode == RobotCentric){
             double  drive    =   gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double  strafe   = - gamepad1.left_stick_x;
+            double  strafe   =   gamepad1.left_stick_x;
             double  turn     = - gamepad1.right_stick_x;
             //boolean slow     =   gamepad1.right_bumper;
             
@@ -169,7 +170,7 @@ public class Teleop extends LinearOpMode {
           }
           else{
             double x = gamepad1.left_stick_x;
-            double y = gamepad1.left_stick_y;
+            double y = - gamepad1.left_stick_y;
             double rx = gamepad1.right_stick_x;
               
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
@@ -196,11 +197,9 @@ public class Teleop extends LinearOpMode {
           leftBackDrive.setPower(leftBackPower);
           rightBackDrive.setPower(rightBackPower);
 
-        double dPosition = rightHang.getCurrentPosition()-leftHang.getCurrentPosition();
 
-
-          rightHang.setPower(hangSpeed);
-          leftHang.setPower(hangSpeed+dPosition*pr);
+          rightHang.setPower(leftHangSpeed);
+          leftHang.setPower(rightHangSpeed);
 
           /*if(rightHang.getCurrentPosition()>leftHang.getCurrentPosition()){
               rightHang.setPower(0);
