@@ -227,7 +227,7 @@ public class RedCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
-        tfod.setMinResultConfidence(0.5f);
+        tfod.setMinResultConfidence(0.61f);
         // Create the vision portal the easy way.
 
         visionPortal = VisionPortal.easyCreateWithDefaults(

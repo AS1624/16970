@@ -191,8 +191,9 @@ public class BlueCloseRR extends LinearOpMode {
                 telemetry.addData("getLocation",location);
                 telemetry.update();
 
-                drive.followTrajectory(drive.trajectoryBuilder(location)
+                drive.followTrajectorySequence(drive.trajectorySequenceBuilder(location)
                         .lineToLinearHeading(getDropoff(true,randomization,false))
+                        .back(2)
                         .build()
                 );
 
@@ -200,7 +201,7 @@ public class BlueCloseRR extends LinearOpMode {
                 slowServo(lever, 0.5);
                 drive.followTrajectorySequence(drive.trajectorySequenceBuilder(getDropoff(true,randomization,false))
                         .back(12)
-                        .strafeLeft(24)
+                        .strafeLeft(36)
                         .forward(20)
                         .build()
                 );
@@ -227,7 +228,7 @@ public class BlueCloseRR extends LinearOpMode {
         aprilTag = AprilTagProcessor.easyCreateWithDefaults();
         tfod = new TfodProcessor.Builder().setModelFileName(TFOD_MODEL_FILE).build();
 
-        tfod.setMinResultConfidence(0.5f);
+        tfod.setMinResultConfidence(0.61f);
         // Create the vision portal the easy way.
 
         visionPortal = VisionPortal.easyCreateWithDefaults(
@@ -322,7 +323,7 @@ public class BlueCloseRR extends LinearOpMode {
     private  Pose2d getDropoff(boolean isBlue, int randomization, boolean isLeft){
         double y;
         if(isBlue){
-            y =   -72 + ( 39 + 6 * randomization + (isLeft?0:3) );
+            y =   -72 + ( 39 + 4 * randomization + (isLeft?0:3) );
         }
         else {
             y = -72 + (24.5 + 6 * (2- randomization) + (isLeft ? 3 : 0));
@@ -332,7 +333,7 @@ public class BlueCloseRR extends LinearOpMode {
         telemetry.addData("B", isBlue);
         telemetry.addData("L", isLeft);
         telemetry.update();
-        return new Pose2d(54, y, 0);
+        return new Pose2d(-34, y, Math.toRadians(180));
     }
     private void slowServo(Servo servo, double end){
         int count = 100;
